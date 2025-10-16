@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import type { DataType } from './types';
+import { BrowserRouter } from 'react-router-dom';
 
 const data: DataType = {
   quantity: 312,
@@ -50,6 +51,8 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <App data={data}/>
+    <BrowserRouter>
+      <App data={data} />
+    </BrowserRouter>
   </React.StrictMode>
 );
