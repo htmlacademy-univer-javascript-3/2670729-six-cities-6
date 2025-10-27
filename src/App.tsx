@@ -18,11 +18,14 @@ function App({ data }: AppProps) {
 
   const getPageModifiers = (pathname: string) => {
     const modifiers: string[] = [];
-
     if (pathname === '/') {
       modifiers.push('page--gray', 'page--main');
     } else if (pathname === '/login') {
       modifiers.push('page--gray', 'page--login');
+    } else if (pathname === '/favorites') {
+      if (data.user?.favoriteCount === 0){
+        modifiers.push('page--favorites-empty');
+      }
     }
 
     return modifiers;
@@ -35,7 +38,10 @@ function App({ data }: AppProps) {
 
   return (
     <div className={pageClasses}>
-      <Header isPageLogin={isPageLogin}/>
+      {/* Обработчик logOutClick в компоненте Header в дальнейшем будет изменен.
+       Текущий используется для демонстрации работы переключения на страницу /login
+       с помощью компонента Link */}
+      <Header user={data.user} isPageLogin={isPageLogin} logOutClick={()=>(data.user = undefined)}/>
       <Routes>
         <Route
           path="/"
@@ -46,7 +52,7 @@ function App({ data }: AppProps) {
           path="/favorites"
           element={
             <PrivateRoute isAuthorized={false}>
-              <Favorites />
+              <Favorites favorites={data.user?.favorites || []}/>
             </PrivateRoute>
           }
         />

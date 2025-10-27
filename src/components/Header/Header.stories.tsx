@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-
-import { fn } from 'storybook/test';
-
+import { MemoryRouter } from 'react-router-dom';
+import { user } from '../../mocks';
 import Header from './Header';
 
 const meta = {
@@ -11,11 +10,13 @@ const meta = {
   parameters: {
     layout: 'fullscreen',
   },
-  // args: {
-  //   onLogin: fn(),
-  //   onLogout: fn(),
-  //   onCreateAccount: fn(),
-  // },
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
 } satisfies Meta<typeof Header>;
 
 export default meta;
@@ -23,10 +24,7 @@ type Story = StoryObj<typeof meta>;
 
 export const LoggedIn: Story = {
   args: {
-    user: {
-      favoriteCount: 3,
-      email: 'Oliver.conner@gmail.com',
-    },
+    user,
     isPageLogin: false,
   },
 };
@@ -42,3 +40,4 @@ export const ForLoginPage: Story = {
     isPageLogin: true,
   },
 };
+

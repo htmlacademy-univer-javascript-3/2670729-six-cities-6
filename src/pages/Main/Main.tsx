@@ -1,6 +1,5 @@
-/* eslint-disable react/prop-types */
-import Card from '../../components/Card';
 import type { CardProps } from '../../components/Card/Card';
+import OfferList from '../../components/OfferList';
 
 type MainProps = {
   quantity: number;
@@ -79,14 +78,7 @@ const Main: React.FC<MainProps> = ({ quantity = 0, cards = [] }) => (
               </li>
             </ul>
           </form>
-          <div className="cities__places-list places__list tabs__content">
-            {cards.map((card) => (
-              <Card
-                key={`${card.name}-${card.type}-${card.priceValue}-${card.priceText}-${card.mark}`}
-                {...card}
-              />
-            ))}
-          </div>
+          <OfferList cards={cards} />
         </section>
         <div className="cities__right-section">
           <section className="cities__map map"></section>

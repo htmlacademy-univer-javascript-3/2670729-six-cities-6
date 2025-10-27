@@ -1,35 +1,53 @@
-/* eslint-disable react/prop-types */
+import { Link } from 'react-router-dom';
+import cn from 'classnames';
+
 export type CardProps = {
+  id: number;
   mark: string;
   priceValue: string;
   priceText: string;
   name: string;
   type: string;
+  rating: number;
+  image: string;
+  isFavorite: boolean;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 };
 
 const Card: React.FC<CardProps> = ({
+  id,
   mark,
   priceValue,
   priceText,
   name,
   type,
+  rating,
+  image,
+  isFavorite,
+  onMouseEnter,
+  onMouseLeave,
 }) => (
-  <article className="cities__card place-card">
+  <article
+    className="cities__card place-card"
+    onMouseEnter={onMouseEnter}
+    onMouseLeave={onMouseLeave}
+  >
     {mark && (
       <div className="place-card__mark">
         <span>{mark}</span>
       </div>
     )}
     <div className="cities__image-wrapper place-card__image-wrapper">
-      <a href="#">
+      <Link to={`/offer/${id}`}>
         <img
           className="place-card__image"
-          src="img/apartment-01.jpg"
+          src={image}
           width="260"
           height="200"
           alt="Place image"
         />
-      </a>
+      </Link>
     </div>
     <div className="place-card__info">
       <div className="place-card__price-wrapper">
@@ -37,16 +55,16 @@ const Card: React.FC<CardProps> = ({
           <b className="place-card__price-value">&euro;{priceValue} </b>
           <span className="place-card__price-text">&#47;&nbsp;{priceText}</span>
         </div>
-        <button className="place-card__bookmark-button button" type="button">
+        <button className={cn('place-card__bookmark-button', 'button', { 'place-card__bookmark-button--active': isFavorite })} type="button">
           <svg className="place-card__bookmark-icon" width="18" height="19">
             <use xlinkHref="#icon-bookmark"></use>
           </svg>
-          <span className="visually-hidden">To bookmarks</span>
+          <span className="visually-hidden">{isFavorite ? 'In bookmarks' : 'To bookmarks' }</span>
         </button>
       </div>
       <div className="place-card__rating rating">
         <div className="place-card__stars rating__stars">
-          <span style={{ width: '80%' }}></span>
+          <span style={{ width: `${rating * 20}%` }}></span>
           <span className="visually-hidden">Rating</span>
         </div>
       </div>
