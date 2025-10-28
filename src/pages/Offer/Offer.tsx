@@ -130,8 +130,8 @@ const Offer: React.FC<OfferProps> = ({ isAuthorized }) => {
             <div className="offer__inside">
               <h2 className="offer__inside-title">What&apos;s inside</h2>
               <ul className="offer__inside-list">
-                {offer.goods.map((item, index) => (
-                  <li key={index} className="offer__inside-item">
+                {offer.goods.map((item) => (
+                  <li key={item} className="offer__inside-item">
                     {item}
                   </li>
                 ))}
@@ -155,8 +155,8 @@ const Offer: React.FC<OfferProps> = ({ isAuthorized }) => {
                 )}
               </div>
               <div className="offer__description">
-                {offer.description.map((item, index) => (
-                  <p key={index} className="offer__text">
+                {offer.description.map((item) => (
+                  <p key={item} className="offer__text">
                     {item}
                   </p>
                 ))}
@@ -197,7 +197,8 @@ const Offer: React.FC<OfferProps> = ({ isAuthorized }) => {
                           <div className="reviews__stars rating__stars">
                             <span
                               style={{ width: `${item.rating * 20}%` }}
-                            ></span>
+                            >
+                            </span>
                             <span className="visually-hidden">Rating</span>
                           </div>
                         </div>
