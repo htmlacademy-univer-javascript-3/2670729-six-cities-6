@@ -51,7 +51,7 @@
     "faker": "5.5.3",
     "jsdom": "22.1.0",
     "storybook": "^9.1.13",
-    "typescript": "5.2.2",
+    "typescript": "^5.6.3",
     "vite": "^7.1.12",
     "vitest": "0.34.6"
   },
