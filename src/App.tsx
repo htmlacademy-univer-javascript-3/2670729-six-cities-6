@@ -51,7 +51,7 @@ function App({ data }: AppProps) {
         <Route
           path="/favorites"
           element={
-            <PrivateRoute isAuthorized={false}>
+            <PrivateRoute isAuthorized>
               <Favorites favorites={data.user?.favorites || []}/>
             </PrivateRoute>
           }
