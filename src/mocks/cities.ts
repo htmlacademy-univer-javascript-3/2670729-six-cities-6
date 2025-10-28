@@ -10,15 +10,6 @@ export interface City {
 
 export const cities: City[] = [
   {
-    id: 'amsterdam',
-    name: 'Amsterdam',
-    location: {
-      latitude: 52.37454,
-      longitude: 4.897976,
-      zoom: 12
-    }
-  },
-  {
     id: 'paris',
     name: 'Paris',
     location: {
@@ -42,6 +33,15 @@ export const cities: City[] = [
     location: {
       latitude: 50.846557,
       longitude: 4.351697,
+      zoom: 12
+    }
+  },
+  {
+    id: 'amsterdam',
+    name: 'Amsterdam',
+    location: {
+      latitude: 52.37454,
+      longitude: 4.897976,
       zoom: 12
     }
   },
