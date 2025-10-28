@@ -42,6 +42,7 @@
     "@typescript-eslint/parser": "6.7.4",
     "@vitejs/plugin-react": "^5.0.4",
     "axios-mock-adapter": "1.22.0",
+    "chromatic": "^13.3.2",
     "eslint": "8.51.0",
     "eslint-config-htmlacademy": "9.1.1",
     "eslint-plugin-react-hooks": "4.6.0",
