@@ -56,7 +56,7 @@ function App({ data }: AppProps) {
             </PrivateRoute>
           }
         />
-        <Route path="/offer/:id" element={<Offer />} />
+        <Route path="/offer/:id" element={<Offer isAuthorized/>} />
         <Route path="*" element={<Stab404 />} />
       </Routes>
     </div>

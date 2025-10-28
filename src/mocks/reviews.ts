@@ -1,5 +1,6 @@
 export interface Review {
   id: number;
+  offerID: number;
   user: {
     name: string;
     avatar: string;
@@ -12,6 +13,7 @@ export interface Review {
 export const reviews: Review[] = [
   {
     id: 1,
+    offerID: 1,
     user: {
       name: 'Max',
       avatar: 'img/avatar-max.jpg'
@@ -22,6 +24,7 @@ export const reviews: Review[] = [
   },
   {
     id: 2,
+    offerID: 2,
     user: {
       name: 'Angelina',
       avatar: 'img/avatar-angelina.jpg'
@@ -32,6 +35,7 @@ export const reviews: Review[] = [
   },
   {
     id: 3,
+    offerID: 4,
     user: {
       name: 'John',
       avatar: 'img/avatar-max.jpg'
@@ -41,3 +45,6 @@ export const reviews: Review[] = [
     date: '2019-06-10'
   }
 ];
+
+
+export const getReviewsByOfferId = (offerID: number) => (reviews.filter((review) => review.offerID === offerID));

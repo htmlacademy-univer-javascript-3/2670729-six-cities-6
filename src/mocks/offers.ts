@@ -228,3 +228,5 @@ export const offers: Offer[] = [
 export const getFavoriteOffers = (favorites: number[]) => (
   offers.filter((offer) => favorites.includes(offer.id))
 );
+
+export const getOfferById = (id:number): Offer | undefined => (offers.find((item) => item.id === id));
