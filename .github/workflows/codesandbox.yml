@@ -1,0 +1,80 @@
+name: CodeSandbox Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  deploy:
+    name: Deploy to CodeSandbox
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate CodeSandbox URL and comment PR
+        id: codesandbox
+        uses: actions/github-script@v7
+        with:
+          script: |
+            try {
+              const { data: pr } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.issue.number,
+              });
+              
+              // CodeSandbox может импортировать проекты из GitHub напрямую
+              // Формируем URL для импорта из GitHub
+              const branchName = pr.head.ref;
+              const codesandboxUrl = `https://codesandbox.io/s/github/${context.repo.owner}/${context.repo.repo}/tree/${branchName}`;
+              
+              // Проверяем, есть ли уже комментарий от бота
+              const comments = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+              });
+              
+              const botComment = comments.data.find(
+                comment => comment.user.type === 'Bot' && 
+                comment.body.includes('CodeSandbox')
+              );
+              
+              const commentBody = `## 🚀 Preview в CodeSandbox
+              
+              Проект доступен для просмотра в CodeSandbox:
+              
+              🔗 **[Открыть в CodeSandbox](${codesandboxUrl})**
+              
+              > Branch: \`${branchName}\`
+              > 
+              > Ссылка будет автоматически обновляться при новых коммитах в PR.`;
+              
+              if (botComment) {
+                // Обновляем существующий комментарий
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: botComment.id,
+                  body: commentBody
+                });
+              } else {
+                // Создаем новый комментарий
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  body: commentBody
+                });
+              }
+              
+              return { url: codesandboxUrl };
+            } catch (error) {
+              console.error(`Ошибка при создании комментария: ${error.message}`);
+              throw error;
+            }
+
