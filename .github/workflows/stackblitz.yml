@@ -1,7 +1,7 @@
-name: Add StackBlitz Preview Link
+name: StackBlitz Preview
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, synchronize, reopened]
 
 permissions:
