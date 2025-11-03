@@ -1,0 +1,10 @@
+{
+  "template": "node",
+  "container": {
+    "startScript": "start",
+    "node": "18"
+  },
+  "setupCommand": "npm install",
+  "infiniteLoopProtection": true
+}
+
