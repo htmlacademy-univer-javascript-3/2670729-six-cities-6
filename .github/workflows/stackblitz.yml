@@ -17,23 +17,28 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             try {
-              const branch = context.payload.pull_request.head.ref;
-              const owner = context.repo.owner;
-              const repo = context.repo.repo;
+              // Используем head репозиторий (форк) и ветку PR
+              const pr = context.payload.pull_request;
+              const headRepo = pr.head.repo;
+              const branch = pr.head.ref;
+              const owner = headRepo.owner.login;
+              const repo = headRepo.name;
 
               const stackblitzUrl = `https://stackblitz.com/github/${owner}/${repo}/tree/${branch}?startScript=start`;
 
               await github.rest.issues.createComment({
                 issue_number: context.issue.number,
-                owner,
-                repo,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
                 body: `🚀 **Preview on StackBlitz:**\n\n[Open in StackBlitz](${stackblitzUrl})`
               });
             } catch (error) {
               // Если нельзя комментировать (например, PR из форка), выводим ссылку в консоль и summary
-              const owner = context.repo.owner;
-              const repo = context.repo.repo;
-              const branch = context.payload.pull_request.head.ref;
+              const pr = context.payload.pull_request;
+              const headRepo = pr.head.repo;
+              const branch = pr.head.ref;
+              const owner = headRepo.owner.login;
+              const repo = headRepo.name;
               const stackblitzUrl = `https://stackblitz.com/github/${owner}/${repo}/tree/${branch}?startScript=start`;
 
               console.warn(`Не удалось добавить комментарий в PR: ${error.message}`);
