@@ -15,11 +15,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
-      # - name: Download build
-      #   uses: dawidd6/action-download-artifact@v2
-      #   with:
-      #     name: actions_artifacts
-      #     workflow: ${{ github.event.workflow_run.workflow_id }}
+      - name: Download build
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          name: actions_artifacts
+          workflow: ${{ github.event.workflow_run.workflow_id }}
 
       - name: Get PR number
         run: |
