@@ -1,7 +1,7 @@
 name: StackBlitz Preview
 
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, synchronize, reopened]
 
 permissions:
@@ -33,7 +33,6 @@ jobs:
                 body: `🚀 **Preview on StackBlitz:**\n\n[Open in StackBlitz](${stackblitzUrl})`
               });
             } catch (error) {
-              // Если нельзя комментировать (например, PR из форка), выводим ссылку в консоль и summary
               const pr = context.payload.pull_request;
               const headRepo = pr.head.repo;
               const branch = pr.head.ref;
