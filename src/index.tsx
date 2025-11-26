@@ -3,46 +3,28 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import type { DataType } from './types';
 import { BrowserRouter } from 'react-router-dom';
+import { offers, reviews, cities, user } from './mocks';
+
+// Преобразуем данные из offers в формат cards для совместимости
+const cards = offers.map((offer) => ({
+  id: offer.id,
+  mark: offer.mark,
+  priceValue: offer.priceValue,
+  priceText: offer.priceText,
+  name: offer.name,
+  type: offer.type,
+  rating: offer.rating,
+  image: offer.images[0],
+  isFavorite: offer.isFavorite
+}));
 
 const data: DataType = {
-  quantity: 312,
-  cards: [
-    {
-      mark: 'Premium',
-      priceValue: '120',
-      priceText: 'night',
-      name: 'Beautiful &amp; luxurious apartment at great location',
-      type: 'Apartment',
-    },
-    {
-      mark: '',
-      priceValue: '80',
-      priceText: 'night',
-      name: 'Wood and stone place',
-      type: 'Room',
-    },
-    {
-      mark: '',
-      priceValue: '132',
-      priceText: 'night',
-      name: 'Canal View Prinsengracht',
-      type: 'Apartment',
-    },
-    {
-      mark: 'Premium',
-      priceValue: '180',
-      priceText: 'night',
-      name: 'Nice, cozy, warm big bed apartment',
-      type: 'Apartment',
-    },
-    {
-      mark: '',
-      priceValue: '80',
-      priceText: 'night',
-      name: 'Wood and stone place',
-      type: 'Room',
-    },
-  ],
+  quantity: offers.length,
+  cards: cards,
+  offers: offers,
+  reviews: reviews,
+  cities: cities,
+  user: user
 };
 
 const root = ReactDOM.createRoot(

@@ -3,6 +3,11 @@
 * Студент: [Андрей Правосудов](https://up.htmlacademy.ru/univer-js3/6/user/2670729).
 * Наставник: [Андрей Осипук](https://htmlacademy.ru/profile/id616431).
 
+## Демонстрация
+Демонстрация проекта доступна на [CodeSandBox](https://codesandbox.io/p/github/aka-Steam/six-cities/module4-task1)
+
+Посмотреть Storybook можно в [Chromatic](https://6900c6c650a811417c5490d8-wixunnafsl.chromatic.com/)
+
 ---
 
 _Не удаляйте и не изменяйте папки и файлы:_

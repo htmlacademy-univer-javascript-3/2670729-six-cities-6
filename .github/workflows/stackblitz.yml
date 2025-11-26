@@ -1,0 +1,52 @@
+name: StackBlitz Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  add-link:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment with StackBlitz Link
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            try {
+              // Используем head репозиторий (форк) и ветку PR
+              const pr = context.payload.pull_request;
+              const headRepo = pr.head.repo;
+              const branch = pr.head.ref;
+              const owner = headRepo.owner.login;
+              const repo = headRepo.name;
+
+              const stackblitzUrl = `https://stackblitz.com/github/${owner}/${repo}/tree/${branch}?startScript=start`;
+
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `🚀 **Preview on StackBlitz:**\n\n[Open in StackBlitz](${stackblitzUrl})`
+              });
+            } catch (error) {
+              const pr = context.payload.pull_request;
+              const headRepo = pr.head.repo;
+              const branch = pr.head.ref;
+              const owner = headRepo.owner.login;
+              const repo = headRepo.name;
+              const stackblitzUrl = `https://stackblitz.com/github/${owner}/${repo}/tree/${branch}?startScript=start`;
+
+              console.warn(`Не удалось добавить комментарий в PR: ${error.message}`);
+              console.log(`\n🔗 StackBlitz: ${stackblitzUrl}`);
+
+              const fs = require('fs');
+              const summaryPath = process.env.GITHUB_STEP_SUMMARY;
+              if (summaryPath) {
+                const summary = `## 🔗 StackBlitz Preview\n\n**Комментарий недоступен.** Скопируйте ссылку и добавьте в PR вручную:\n\n[${stackblitzUrl}](${stackblitzUrl})`;
+                fs.appendFileSync(summaryPath, summary);
+              }
+            }
