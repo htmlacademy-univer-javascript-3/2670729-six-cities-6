@@ -10,4 +10,12 @@ export type DataType = {
   user?: User;
 };
 
+export type { Offer, Review, City, User };
 
+export type Point = {
+  title: string;
+  lat: number;
+  lng: number;
+};
+
+export type Points = Point[];

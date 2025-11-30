@@ -1,6 +1,8 @@
+import { useState, useEffect } from 'react';
 import type { CardProps } from '../../components/Card/Card';
 import OfferList from '../../components/OfferList';
 import type { Offer, City } from '../../mocks';
+import Map from '../../components/Map';
 import { Link, useSearchParams } from 'react-router-dom';
 
 type MainProps = {
@@ -10,16 +12,26 @@ type MainProps = {
 
 const Main: React.FC<MainProps> = ({ offers = [], cities = [] }) => {
   const [searchParams] = useSearchParams();
+  const [activeOfferId, setActiveOfferId] = useState<number | null>(null);
   const defaultCityId = 'amsterdam';
   const activeCityId = searchParams.get('city') || defaultCityId;
 
   const activeCity = cities.find((c) => c.id === activeCityId) || cities[0];
+
+  // Сбрасываем активное предложение при смене города
+  useEffect(() => {
+    setActiveOfferId(null);
+  }, [activeCityId]);
 
   const filteredOffers = offers.filter((offer) => (
     activeCity ? offer.city === activeCity.name : true
   ));
 
   const quantity = filteredOffers.length;
+
+  const selectedOffer = activeOfferId
+    ? filteredOffers.find((offer) => offer.id === activeOfferId)
+    : undefined;
 
   const cards: CardProps[] = filteredOffers.map((offer) => ({
     id: offer.id,
@@ -108,10 +120,10 @@ const Main: React.FC<MainProps> = ({ offers = [], cities = [] }) => {
                   </li>
                 </ul>
               </form>
-              <OfferList cards={cards} />
+              <OfferList cards={cards} onCardHover={setActiveOfferId} />
             </section>
             <div className="cities__right-section">
-              <section className="cities__map map"></section>
+              <Map city={activeCity} offers={filteredOffers} selectedOffer={selectedOffer} className={'cities__map map'}/>
             </div>
           </div>
         )}

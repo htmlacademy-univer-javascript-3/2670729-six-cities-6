@@ -48,3 +48,35 @@ export const Premium: Story = {
     isFavorite: false
   },
 };
+
+export const NearPlace: Story = {
+  args: {
+    id: 3,
+    mark: '',
+    priceValue: '132',
+    priceText: 'night',
+    name: 'Canal View Prinsengracht',
+    type: 'Apartment',
+    rating: 4.2,
+    image: 'img/apartment-02.jpg',
+    isFavorite: false,
+    cardClassName: 'near-places__card place-card',
+    imageWrapperClassName: 'near-places__image-wrapper place-card__image-wrapper'
+  },
+};
+
+export const PremiumNearPlace: Story = {
+  args: {
+    id: 4,
+    mark: 'Premium',
+    priceValue: '180',
+    priceText: 'night',
+    name: 'Nice, cozy, warm big bed apartment',
+    type: 'Apartment',
+    rating: 5.0,
+    image: 'img/apartment-03.jpg',
+    isFavorite: false,
+    cardClassName: 'near-places__card place-card',
+    imageWrapperClassName: 'near-places__image-wrapper place-card__image-wrapper'
+  },
+};
