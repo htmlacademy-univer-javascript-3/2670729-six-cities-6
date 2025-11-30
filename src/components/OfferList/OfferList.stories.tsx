@@ -92,6 +92,3 @@ export const NearPlaces: Story = {
     listClassName: 'near-places__list places__list',
   },
 };
-
-
-
