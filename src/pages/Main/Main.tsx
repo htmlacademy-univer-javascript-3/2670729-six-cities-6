@@ -23,9 +23,9 @@ const Main: React.FC<MainProps> = ({ offers = [], cities = [] }) => {
     setActiveOfferId(null);
   }, [activeCityId]);
 
-  const filteredOffers = offers.filter((offer) => (
+  const filteredOffers = offers.filter((offer) =>
     activeCity ? offer.city === activeCity.name : true
-  ));
+  );
 
   const quantity = filteredOffers.length;
 
@@ -42,7 +42,7 @@ const Main: React.FC<MainProps> = ({ offers = [], cities = [] }) => {
     type: offer.type,
     rating: offer.rating,
     image: offer.images[0],
-    isFavorite: offer.isFavorite
+    isFavorite: offer.isFavorite,
   }));
 
   const isEmpty = quantity === 0;
@@ -52,8 +52,10 @@ const Main: React.FC<MainProps> = ({ offers = [], cities = [] }) => {
       className={[
         'page__main',
         'page__main--index',
-        isEmpty ? 'page__main--index-empty' : ''
-      ].filter(Boolean).join(' ')}
+        isEmpty ? 'page__main--index-empty' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
     >
       <h1 className="visually-hidden">Cities</h1>
       <div className="tabs">
@@ -65,8 +67,10 @@ const Main: React.FC<MainProps> = ({ offers = [], cities = [] }) => {
                   className={[
                     'locations__item-link',
                     'tabs__item',
-                    city.id === activeCityId ? 'tabs__item--active' : ''
-                  ].filter(Boolean).join(' ')}
+                    city.id === activeCityId ? 'tabs__item--active' : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
                   to={`/?city=${city.id}`}
                 >
                   <span>{city.name}</span>
@@ -82,7 +86,10 @@ const Main: React.FC<MainProps> = ({ offers = [], cities = [] }) => {
             <section className="cities__no-places">
               <div className="cities__status-wrapper tabs__content">
                 <b className="cities__status">No places to stay available</b>
-                <p className="cities__status-description">We could not find any property available at the moment in {activeCity?.name || ''}</p>
+                <p className="cities__status-description">
+                  We could not find any property available at the moment in{' '}
+                  {activeCity?.name || ''}
+                </p>
               </div>
             </section>
             <div className="cities__right-section"></div>
@@ -123,7 +130,12 @@ const Main: React.FC<MainProps> = ({ offers = [], cities = [] }) => {
               <OfferList cards={cards} onCardHover={setActiveOfferId} />
             </section>
             <div className="cities__right-section">
-              <Map city={activeCity} offers={filteredOffers} selectedOffer={selectedOffer} className={'cities__map map'}/>
+              <Map
+                city={activeCity}
+                offers={filteredOffers}
+                selectedOffer={selectedOffer}
+                className={'cities__map map'}
+              />
             </div>
           </div>
         )}
