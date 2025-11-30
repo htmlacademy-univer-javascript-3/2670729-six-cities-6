@@ -13,6 +13,8 @@ export type CardProps = {
   isFavorite: boolean;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
+  cardClassName?: string;
+  imageWrapperClassName?: string;
 };
 
 const Card: React.FC<CardProps> = ({
@@ -27,9 +29,11 @@ const Card: React.FC<CardProps> = ({
   isFavorite,
   onMouseEnter,
   onMouseLeave,
+  cardClassName = 'cities__card place-card',
+  imageWrapperClassName = 'cities__image-wrapper place-card__image-wrapper',
 }) => (
   <article
-    className="cities__card place-card"
+    className={cardClassName}
     onMouseEnter={onMouseEnter}
     onMouseLeave={onMouseLeave}
   >
@@ -38,7 +42,7 @@ const Card: React.FC<CardProps> = ({
         <span>{mark}</span>
       </div>
     )}
-    <div className="cities__image-wrapper place-card__image-wrapper">
+    <div className={imageWrapperClassName}>
       <Link to={`/offer/${id}`}>
         <img
           className="place-card__image"
