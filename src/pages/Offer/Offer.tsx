@@ -56,7 +56,7 @@ const Offer: React.FC<OfferProps> = ({ isAuthorized }) => {
     type: nearOffer.type,
     rating: nearOffer.rating,
     image: nearOffer.images[0],
-    isFavorite: nearOffer.isFavorite
+    isFavorite: nearOffer.isFavorite,
   }));
 
   return offer !== undefined ? (
@@ -228,7 +228,8 @@ const Offer: React.FC<OfferProps> = ({ isAuthorized }) => {
               cards={nearCards.map((card) => ({
                 ...card,
                 cardClassName: 'near-places__card place-card',
-                imageWrapperClassName: 'near-places__image-wrapper place-card__image-wrapper'
+                imageWrapperClassName:
+                  'near-places__image-wrapper place-card__image-wrapper',
               }))}
               listClassName="near-places__list places__list"
             />
