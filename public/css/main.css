@@ -224,6 +224,10 @@ img {
   max-width: 100%;
   height: auto;
 }
+
+map{
+    display: block;
+}
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -1317,9 +1321,11 @@ img {
   margin-bottom: 55px;
 }
 .offer__map {
-  width: 100%;
+  width: calc(100% - 120px);
   height: 579px;
   margin-bottom: 50px;
+  margin-left: 60px;
+  margin-right: 60px;
   background-image: url(../img/map-big.jpg);
   background-repeat: no-repeat;
   background-size: 1144px auto;

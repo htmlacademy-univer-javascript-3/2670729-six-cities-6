@@ -123,8 +123,7 @@ const Main: React.FC<MainProps> = ({ offers = [], cities = [] }) => {
               <OfferList cards={cards} onCardHover={setActiveOfferId} />
             </section>
             <div className="cities__right-section">
-              {/* <section className="cities__map map"></section> */}
-              <Map city={activeCity} offers={filteredOffers} selectedOffer={selectedOffer} />
+              <Map city={activeCity} offers={filteredOffers} selectedOffer={selectedOffer} className={'cities__map map'}/>
             </div>
           </div>
         )}

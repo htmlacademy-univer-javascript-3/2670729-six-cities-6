@@ -4,12 +4,15 @@ import { useParams } from 'react-router-dom';
 import {
   getOfferById,
   getReviewsByOfferId,
+  offers,
+  cities,
   type Offer as OfferType,
   type Review,
 } from '../../mocks';
 import Stab404 from '../404';
 import ReviewForm from '../../components/ReviewForm';
 import ReviewsList from '../../components/ReviewsList';
+import Map from '../../components/Map';
 
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
@@ -31,6 +34,15 @@ const Offer: React.FC<OfferProps> = ({ isAuthorized }) => {
       setReviews(getReviewsByOfferId(Number(id)));
     }
   }, [id]);
+
+  // Получаем данные для карты: текущее предложение + 3 ближайших
+  const city = offer ? cities.find((c) => c.name === offer.city) : undefined;
+  const nearOffers = offer
+    ? offers
+      .filter((o) => o.city === offer.city && o.id !== offer.id)
+      .slice(0, 3)
+    : [];
+  const mapOffers = offer ? [offer, ...nearOffers] : [];
 
   return offer !== undefined ? (
     <main className="page__main page__main--offer">
@@ -182,7 +194,14 @@ const Offer: React.FC<OfferProps> = ({ isAuthorized }) => {
             </section>
           </div>
         </div>
-        <section className="offer__map map"></section>
+        {city && (
+          <Map
+            city={city}
+            offers={mapOffers}
+            selectedOffer={offer}
+            className="offer__map map"
+          />
+        )}
       </section>
       <div className="container">
         <section className="near-places places">
