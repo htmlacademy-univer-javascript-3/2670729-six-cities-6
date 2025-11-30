@@ -10,7 +10,7 @@ export type DataType = {
   user?: User;
 };
 
-export type { Offer, City };
+export type { Offer, Review, City, User };
 
 export type Point = {
   title: string;
