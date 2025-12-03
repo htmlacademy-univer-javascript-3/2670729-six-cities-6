@@ -45,7 +45,7 @@ function App({ data }: AppProps) {
       <Routes>
         <Route
           path="/"
-          element={<Main offers={data.offers} cities={data.cities} />}
+          element={<Main cities={data.cities} />}
         />
         <Route path="/login" element={<Login />} />
         <Route

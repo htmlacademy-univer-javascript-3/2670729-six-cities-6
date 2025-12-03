@@ -1,31 +1,41 @@
 import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import type { CardProps } from '../../components/Card/Card';
 import OfferList from '../../components/OfferList';
-import type { Offer, City } from '../../mocks';
+import CitiesList from '../../components/CitiesList';
+import type { City } from '../../mocks';
 import Map from '../../components/Map';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+import { getOffersByCity } from '../../store/selectors';
+import { changeCity } from '../../store/actions';
 
 type MainProps = {
-  offers: Offer[];
   cities: City[];
 };
 
-const Main: React.FC<MainProps> = ({ offers = [], cities = [] }) => {
+const Main: React.FC<MainProps> = ({ cities = [] }) => {
+  const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const [activeOfferId, setActiveOfferId] = useState<number | null>(null);
-  const defaultCityId = 'amsterdam';
+  const defaultCityId = 'paris';
   const activeCityId = searchParams.get('city') || defaultCityId;
 
-  const activeCity = cities.find((c) => c.id === activeCityId) || cities[0];
+  const activeCity = cities.find((c) => c.id === activeCityId) || cities.find((c) => c.id === 'paris') || cities[0];
+
+  // Синхронизируем выбор города из URL с Redux store
+  useEffect(() => {
+    if (activeCity) {
+      dispatch(changeCity(activeCity.name));
+    }
+  }, [activeCityId, activeCity, dispatch]);
+
+  // Получаем отфильтрованные предложения из Redux store
+  const filteredOffers = useSelector(getOffersByCity);
 
   // Сбрасываем активное предложение при смене города
   useEffect(() => {
     setActiveOfferId(null);
   }, [activeCityId]);
-
-  const filteredOffers = offers.filter((offer) =>
-    activeCity ? offer.city === activeCity.name : true
-  );
 
   const quantity = filteredOffers.length;
 
@@ -58,28 +68,7 @@ const Main: React.FC<MainProps> = ({ offers = [], cities = [] }) => {
         .join(' ')}
     >
       <h1 className="visually-hidden">Cities</h1>
-      <div className="tabs">
-        <section className="locations container">
-          <ul className="locations__list tabs__list">
-            {cities.map((city) => (
-              <li className="locations__item" key={city.id}>
-                <Link
-                  className={[
-                    'locations__item-link',
-                    'tabs__item',
-                    city.id === activeCityId ? 'tabs__item--active' : '',
-                  ]
-                    .filter(Boolean)
-                    .join(' ')}
-                  to={`/?city=${city.id}`}
-                >
-                  <span>{city.name}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
+      <CitiesList cities={cities} activeCityId={activeCityId} />
       <div className="cities">
         {isEmpty ? (
           <div className="cities__places-container cities__places-container--empty container">
