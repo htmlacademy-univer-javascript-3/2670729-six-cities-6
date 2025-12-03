@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { CardProps } from '../../components/Card/Card';
 import OfferList from '../../components/OfferList';
 import CitiesList from '../../components/CitiesList';
-import type { City } from '../../mocks';
+import SortOptions, { type SortType } from '../../components/SortOptions';
+import type { City, Offer } from '../../mocks';
 import Map from '../../components/Map';
 import { useSearchParams } from 'react-router-dom';
 import { getOffersByCity } from '../../store/selectors';
@@ -17,6 +18,7 @@ const Main: React.FC<MainProps> = ({ cities = [] }) => {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const [activeOfferId, setActiveOfferId] = useState<number | null>(null);
+  const [sortType, setSortType] = useState<SortType>('Popular');
   const defaultCityId = 'paris';
   const activeCityId = searchParams.get('city') || defaultCityId;
 
@@ -32,18 +34,38 @@ const Main: React.FC<MainProps> = ({ cities = [] }) => {
   // Получаем отфильтрованные предложения из Redux store
   const filteredOffers = useSelector(getOffersByCity);
 
+  const sortOffers = (offers: Offer[], sort: SortType): Offer[] => {
+    const sorted = [...offers];
+    switch (sort) {
+      case 'Price: low to high':
+        return sorted.sort((a, b) => Number(a.priceValue) - Number(b.priceValue));
+      case 'Price: high to low':
+        return sorted.sort((a, b) => Number(b.priceValue) - Number(a.priceValue));
+      case 'Top rated first':
+        return sorted.sort((a, b) => b.rating - a.rating);
+      case 'Popular':
+      default:
+        return sorted;
+    }
+  };
+
+  const sortedOffers = useMemo(
+    () => sortOffers(filteredOffers, sortType),
+    [filteredOffers, sortType]
+  );
+
   // Сбрасываем активное предложение при смене города
   useEffect(() => {
     setActiveOfferId(null);
   }, [activeCityId]);
 
-  const quantity = filteredOffers.length;
+  const quantity = sortedOffers.length;
 
   const selectedOffer = activeOfferId
-    ? filteredOffers.find((offer) => offer.id === activeOfferId)
+    ? sortedOffers.find((offer) => offer.id === activeOfferId)
     : undefined;
 
-  const cards: CardProps[] = filteredOffers.map((offer) => ({
+  const cards: CardProps[] = sortedOffers.map((offer) => ({
     id: offer.id,
     mark: offer.mark,
     priceValue: offer.priceValue,
@@ -90,38 +112,13 @@ const Main: React.FC<MainProps> = ({ cities = [] }) => {
               <b className="places__found">
                 {quantity} places to stay in {activeCity?.name || ''}
               </b>
-              <form className="places__sorting" action="#" method="get">
-                <span className="places__sorting-caption">Sort by</span>
-                <span className="places__sorting-type" tabIndex={0}>
-                  Popular
-                  <svg className="places__sorting-arrow" width="7" height="4">
-                    <use xlinkHref="#icon-arrow-select"></use>
-                  </svg>
-                </span>
-                <ul className="places__options places__options--custom places__options--opened">
-                  <li
-                    className="places__option places__option--active"
-                    tabIndex={0}
-                  >
-                    Popular
-                  </li>
-                  <li className="places__option" tabIndex={0}>
-                    Price: low to high
-                  </li>
-                  <li className="places__option" tabIndex={0}>
-                    Price: high to low
-                  </li>
-                  <li className="places__option" tabIndex={0}>
-                    Top rated first
-                  </li>
-                </ul>
-              </form>
+              <SortOptions currentSort={sortType} onSortChange={setSortType} />
               <OfferList cards={cards} onCardHover={setActiveOfferId} />
             </section>
             <div className="cities__right-section">
               <Map
                 city={activeCity}
-                offers={filteredOffers}
+                offers={sortedOffers}
                 selectedOffer={selectedOffer}
                 className={'cities__map map'}
               />
