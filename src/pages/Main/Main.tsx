@@ -1,20 +1,22 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import type { CardProps } from '../../components/Card/Card';
 import OfferList from '../../components/OfferList';
 import CitiesList from '../../components/CitiesList';
 import SortOptions, { type SortType } from '../../components/SortOptions';
-import type { City, Offer } from '../../mocks';
+import type { City, Offer } from '../../types';
 import Map from '../../components/Map';
+import Spinner from '../../components/Spinner';
 import { useSearchParams } from 'react-router-dom';
-import { getOffersByCity } from '../../store/selectors';
+import { getOffersByCity, getOffers, getIsLoading } from '../../store/selectors';
 import { changeCity } from '../../store/actions';
+import { useAppSelector } from '../../store';
 
 type MainProps = {
   cities: City[];
 };
 
-const Main: React.FC<MainProps> = ({ cities = [] }) => {
+const Main: React.FC<MainProps> = ({ cities: propCities = [] }) => {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const [activeOfferId, setActiveOfferId] = useState<number | null>(null);
@@ -22,7 +24,36 @@ const Main: React.FC<MainProps> = ({ cities = [] }) => {
   const defaultCityId = 'paris';
   const activeCityId = searchParams.get('city') || defaultCityId;
 
-  const activeCity = cities.find((c) => c.id === activeCityId) || cities.find((c) => c.id === 'paris') || cities[0];
+  const allOffers = useAppSelector(getOffers);
+  const isLoading = useAppSelector(getIsLoading);
+
+  // Создаем cities из offers, если propCities пустой
+  const cities: City[] = useMemo(() => {
+    if (propCities.length > 0) {
+      return propCities;
+    }
+
+    // Создаем уникальные города из offers
+    const cityMap: Record<string, City> = {};
+    allOffers.forEach((offer) => {
+      const cityName = offer.city;
+      if (!cityMap[cityName]) {
+        cityMap[cityName] = {
+          id: cityName.toLowerCase(),
+          name: cityName,
+          location: {
+            latitude: offer.location.latitude,
+            longitude: offer.location.longitude,
+            zoom: 12,
+          },
+        };
+      }
+    });
+
+    return Object.values(cityMap);
+  }, [propCities, allOffers]);
+
+  const activeCity: City | undefined = cities.find((c: City) => c.id === activeCityId) || cities.find((c: City) => c.id === 'paris') || cities[0];
 
   // Синхронизируем выбор города из URL с Redux store
   useEffect(() => {
@@ -32,7 +63,7 @@ const Main: React.FC<MainProps> = ({ cities = [] }) => {
   }, [activeCityId, activeCity, dispatch]);
 
   // Получаем отфильтрованные предложения из Redux store
-  const filteredOffers = useSelector(getOffersByCity);
+  const filteredOffers = useAppSelector(getOffersByCity);
 
   const sortOffers = (offers: Offer[], sort: SortType): Offer[] => {
     const sorted = [...offers];
@@ -92,7 +123,12 @@ const Main: React.FC<MainProps> = ({ cities = [] }) => {
       <h1 className="visually-hidden">Cities</h1>
       <CitiesList cities={cities} activeCityId={activeCityId} />
       <div className="cities">
-        {isEmpty ? (
+        {isLoading && (
+          <div className="cities__places-container container">
+            <Spinner />
+          </div>
+        )}
+        {!isLoading && isEmpty && (
           <div className="cities__places-container cities__places-container--empty container">
             <section className="cities__no-places">
               <div className="cities__status-wrapper tabs__content">
@@ -105,7 +141,8 @@ const Main: React.FC<MainProps> = ({ cities = [] }) => {
             </section>
             <div className="cities__right-section"></div>
           </div>
-        ) : (
+        )}
+        {!isLoading && !isEmpty && (
           <div className="cities__places-container container">
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>

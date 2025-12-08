@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import type { City } from '../../mocks';
+import type { City } from '../../types';
 
 type CitiesListProps = {
   cities: City[];

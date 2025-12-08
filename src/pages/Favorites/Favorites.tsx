@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Footer from '../../components/Footer';
-import { getFavoriteOffers, type Offer } from '../../mocks';
+import type { Offer } from '../../types';
 
 type FavoritesProps = {
   favorites: number[];
@@ -10,8 +10,9 @@ const Favorites: React.FC<FavoritesProps> = ({ favorites }) => {
   const [offers, setOffers] = useState<Offer[]>([]);
 
   useEffect(() => {
-    // Имитация запроса объектов по API
-    setOffers(getFavoriteOffers(favorites));
+    // TODO: Загрузка данных из API будет реализована в следующих пунктах
+    // setOffers(getFavoriteOffers(favorites));
+    setOffers([]);
   }, [favorites]);
 
   const groupedByCity: Record<string, Offer[]> = offers.reduce((acc, item) => {

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import Review from './Review';
-import type { Review as ReviewType } from '../../mocks';
+import type { Review as ReviewType } from '../../types';
 
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
