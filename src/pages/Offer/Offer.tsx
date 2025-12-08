@@ -1,14 +1,7 @@
 import cn from 'classnames';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  getOfferById,
-  getReviewsByOfferId,
-  offers,
-  cities,
-  type Offer as OfferType,
-  type Review,
-} from '../../mocks';
+import type { Offer as OfferType, Review, City } from '../../types';
 import Stab404 from '../404';
 import ReviewForm from '../../components/ReviewForm';
 import ReviewsList from '../../components/ReviewsList';
@@ -31,19 +24,27 @@ const Offer: React.FC<OfferProps> = ({ isAuthorized }) => {
   const [reviews, setReviews] = useState<Review[]>([]);
 
   useEffect(() => {
+    // TODO: Загрузка данных из API будет реализована в следующих пунктах
     if (id) {
-      setOffer(getOfferById(Number(id)));
-      setReviews(getReviewsByOfferId(Number(id)));
+      // Временная заглушка для устранения ошибок линтера
+      // setOffer и setReviews будут использоваться при подключении API
+      setOffer(undefined);
+      setReviews([]);
     }
-  }, [id]);
+  }, [id, setOffer, setReviews]);
 
   // Получаем данные для карты: текущее предложение + 3 ближайших
-  const city = offer ? cities.find((c) => c.name === offer.city) : undefined;
-  const nearOffers = offer
-    ? offers
-      .filter((o) => o.city === offer.city && o.id !== offer.id)
-      .slice(0, 3)
-    : [];
+  // TODO: Загрузка данных из API будет реализована в следующих пунктах
+  const city: City | undefined = offer ? {
+    id: offer.city.toLowerCase(),
+    name: offer.city,
+    location: {
+      latitude: offer.location.latitude,
+      longitude: offer.location.longitude,
+      zoom: 12
+    }
+  } : undefined;
+  const nearOffers: OfferType[] = [];
   const mapOffers = offer ? [offer, ...nearOffers] : [];
 
   // Преобразуем ближайшие предложения в формат CardProps

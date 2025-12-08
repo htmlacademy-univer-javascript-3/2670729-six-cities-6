@@ -1,8 +1,11 @@
-import type { Offer } from '../mocks';
+import type { Offer } from '../types';
+import type { AxiosInstance } from 'axios';
+import type { AppDispatch, RootState } from './index';
 
 export const ActionType = {
   CHANGE_CITY: 'CHANGE_CITY',
   LOAD_OFFERS: 'LOAD_OFFERS',
+  SET_LOADING: 'SET_LOADING',
 } as const;
 
 export interface ChangeCityAction {
@@ -15,7 +18,12 @@ export interface LoadOffersAction {
   payload: Offer[];
 }
 
-export type Action = ChangeCityAction | LoadOffersAction;
+export interface SetLoadingAction {
+  type: typeof ActionType.SET_LOADING;
+  payload: boolean;
+}
+
+export type Action = ChangeCityAction | LoadOffersAction | SetLoadingAction;
 
 export const changeCity = (city: string): ChangeCityAction => ({
   type: ActionType.CHANGE_CITY,
@@ -26,4 +34,105 @@ export const loadOffers = (offers: Offer[]): LoadOffersAction => ({
   type: ActionType.LOAD_OFFERS,
   payload: offers,
 });
+
+export const setLoading = (isLoading: boolean): SetLoadingAction => ({
+  type: ActionType.SET_LOADING,
+  payload: isLoading,
+});
+
+// Тип для данных с сервера (может отличаться от нашего типа Offer)
+interface ServerOffer {
+  id: number;
+  title: string;
+  type: string;
+  price: number;
+  city: {
+    name: string;
+    location: {
+      latitude: number;
+      longitude: number;
+      zoom: number;
+    };
+  };
+  location: {
+    latitude: number;
+    longitude: number;
+    zoom: number;
+  };
+  isFavorite?: boolean;
+  isPremium?: boolean;
+  rating: number;
+  description?: string;
+  bedrooms?: number;
+  goods?: string[];
+  host?: {
+    name: string;
+    avatarUrl: string;
+    isPro: boolean;
+  };
+  images?: string[];
+  maxAdults?: number;
+  previewImage?: string;
+}
+
+// Адаптер для преобразования данных с сервера в наш формат
+const adaptOffer = (serverOffer: ServerOffer): Offer => {
+  // Безопасно получаем images
+  const images = (() => {
+    if (serverOffer.images && serverOffer.images.length > 0) {
+      return serverOffer.images;
+    }
+    if (serverOffer.previewImage) {
+      return [serverOffer.previewImage];
+    }
+    return [];
+  })();
+
+  // Безопасно получаем goods
+  const goods = serverOffer.goods || [];
+
+  // Безопасно получаем description
+  const description = serverOffer.description ? [serverOffer.description] : [];
+
+  return {
+    id: serverOffer.id,
+    mark: serverOffer.isPremium ? 'Premium' : '',
+    priceValue: String(serverOffer.price),
+    priceText: 'night',
+    name: serverOffer.title,
+    type: serverOffer.type,
+    rating: serverOffer.rating,
+    images,
+    bedrooms: serverOffer.bedrooms || 0,
+    maxAdults: serverOffer.maxAdults || 0,
+    goods,
+    host: {
+      name: serverOffer.host?.name || '',
+      avatar: serverOffer.host?.avatarUrl || '',
+      isPro: serverOffer.host?.isPro || false,
+    },
+    description,
+    location: {
+      latitude: serverOffer.location?.latitude || 0,
+      longitude: serverOffer.location?.longitude || 0,
+    },
+    city: serverOffer.city?.name || '',
+    isFavorite: serverOffer.isFavorite || false,
+  };
+};
+
+export const fetchOffers = (): ((dispatch: AppDispatch, getState: () => RootState, api: AxiosInstance) => Promise<void>) =>
+  async (dispatch: AppDispatch, _getState: () => RootState, api: AxiosInstance): Promise<void> => {
+    try {
+      dispatch(setLoading(true));
+      const { data } = await api.get<ServerOffer[]>('/offers');
+      const adaptedOffers = data.map(adaptOffer);
+
+      dispatch(loadOffers(adaptedOffers));
+      dispatch(setLoading(false));
+    } catch (error) {
+      // В случае ошибки не загружаем данные
+      dispatch(setLoading(false));
+    }
+  };
 

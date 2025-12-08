@@ -1,14 +1,16 @@
-import type { Offer } from '../mocks';
+import type { Offer } from '../types';
 import { ActionType, type Action } from './actions';
 
 export interface State {
   city: string;
   offers: Offer[];
+  isLoading: boolean;
 }
 
 const initialState: State = {
   city: 'Paris',
   offers: [],
+  isLoading: false,
 };
 
 export const reducer = (state: State = initialState, action: Action): State => {
@@ -22,6 +24,11 @@ export const reducer = (state: State = initialState, action: Action): State => {
       return {
         ...state,
         offers: action.payload,
+      };
+    case ActionType.SET_LOADING:
+      return {
+        ...state,
+        isLoading: action.payload,
       };
     default:
       return state;

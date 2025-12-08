@@ -10,10 +10,10 @@ import type { DataType } from './types';
 import { Route, Routes, useLocation } from 'react-router-dom';
 
 type AppProps = {
-  data: DataType;
+  data?: DataType;
 };
 
-function App({ data }: AppProps) {
+function App({ data }: AppProps = {}) {
   const location = useLocation();
 
   const getPageModifiers = (pathname: string) => {
@@ -23,7 +23,7 @@ function App({ data }: AppProps) {
     } else if (pathname === '/login') {
       modifiers.push('page--gray', 'page--login');
     } else if (pathname === '/favorites') {
-      if (data.user?.favoriteCount === 0){
+      if (data?.user?.favoriteCount === 0){
         modifiers.push('page--favorites-empty');
       }
     }
@@ -41,18 +41,18 @@ function App({ data }: AppProps) {
       {/* Обработчик logOutClick в компоненте Header в дальнейшем будет изменен.
        Текущий используется для демонстрации работы переключения на страницу /login
        с помощью компонента Link */}
-      <Header user={data.user} isPageLogin={isPageLogin} logOutClick={()=>(data.user = undefined)}/>
+      <Header user={data?.user} isPageLogin={isPageLogin} logOutClick={()=>(data && (data.user = undefined))}/>
       <Routes>
         <Route
           path="/"
-          element={<Main cities={data.cities} />}
+          element={<Main cities={data?.cities || []} />}
         />
         <Route path="/login" element={<Login />} />
         <Route
           path="/favorites"
           element={
             <PrivateRoute isAuthorized>
-              <Favorites favorites={data.user?.favorites || []}/>
+              <Favorites favorites={data?.user?.favorites || []}/>
             </PrivateRoute>
           }
         />

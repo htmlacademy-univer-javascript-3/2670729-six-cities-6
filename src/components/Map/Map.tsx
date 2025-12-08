@@ -6,7 +6,7 @@ import {URL_MARKER_DEFAULT, URL_MARKER_CURRENT} from '../../const';
 import 'leaflet/dist/leaflet.css';
 
 type MapProps = {
-  city: City;
+  city: City | undefined;
   offers: Offer[];
   selectedOffer?: Offer | undefined;
   className?: string;
@@ -28,7 +28,12 @@ function Map(props: MapProps): JSX.Element {
   const {city, offers, selectedOffer, className} = props;
 
   const mapRef = useRef(null);
-  const map = useMap(mapRef, city);
+  const map = useMap(mapRef, city!);
+
+  // Не рендерим карту, если city не определен
+  if (!city) {
+    return <div className={className}></div>;
+  }
 
   useEffect(() => {
     if (map) {

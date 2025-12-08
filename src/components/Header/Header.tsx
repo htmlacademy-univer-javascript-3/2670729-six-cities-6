@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import type { User } from '../../mocks/user';
+import type { User } from '../../types';
 
 type HeaderProps = {
   user?: User;
