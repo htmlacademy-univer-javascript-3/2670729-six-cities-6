@@ -73,3 +73,11 @@ export type Point = {
 };
 
 export type Points = Point[];
+
+export interface AuthInfo {
+  token: string;
+  email: string;
+  name: string;
+  avatarUrl: string;
+  isPro: boolean;
+}

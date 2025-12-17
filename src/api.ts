@@ -1,4 +1,6 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+
+const TOKEN_KEY = 'six-cities-token';
 
 /**
  * Создаёт и возвращает настроенный экземпляр axios
@@ -10,6 +12,39 @@ export const createAPI = (): AxiosInstance => {
     timeout: 5000,
   });
 
+  // Interceptor для добавления токена в заголовки
+  api.interceptors.request.use(
+    (config: InternalAxiosRequestConfig) => {
+      const token = localStorage.getItem(TOKEN_KEY);
+      if (token && config.headers) {
+        config.headers['X-Token'] = token;
+      }
+      return config;
+    }
+  );
+
+  // Interceptor для обработки 401
+  api.interceptors.response.use(
+    (response) => response,
+    (error: unknown) => {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { status?: number } };
+        if (axiosError.response?.status === 401) {
+          localStorage.removeItem(TOKEN_KEY);
+        }
+      }
+      return Promise.reject(error);
+    }
+  );
+
   return api;
+};
+
+export const saveToken = (token: string): void => {
+  localStorage.setItem(TOKEN_KEY, token);
+};
+
+export const dropToken = (): void => {
+  localStorage.removeItem(TOKEN_KEY);
 };
 

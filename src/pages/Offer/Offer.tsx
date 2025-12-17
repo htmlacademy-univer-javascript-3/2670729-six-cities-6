@@ -8,20 +8,19 @@ import ReviewsList from '../../components/ReviewsList';
 import Map from '../../components/Map';
 import OfferList from '../../components/OfferList';
 import type { CardProps } from '../../components/Card/Card';
+import { useAppSelector } from '../../store';
 
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 };
 
-type OfferProps = {
-  isAuthorized: boolean;
-};
-
-const Offer: React.FC<OfferProps> = ({ isAuthorized }) => {
+const Offer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [offer, setOffer] = useState<OfferType | undefined>(undefined);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
+  const isAuthorized = authorizationStatus === 'AUTH';
 
   useEffect(() => {
     // TODO: Загрузка данных из API будет реализована в следующих пунктах

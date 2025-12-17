@@ -38,10 +38,8 @@ function App({ data }: AppProps = {}) {
 
   return (
     <div className={pageClasses}>
-      {/* Обработчик logOutClick в компоненте Header в дальнейшем будет изменен.
-       Текущий используется для демонстрации работы переключения на страницу /login
-       с помощью компонента Link */}
-      <Header user={data?.user} isPageLogin={isPageLogin} logOutClick={()=>(data && (data.user = undefined))}/>
+
+      <Header isPageLogin={isPageLogin} />
       <Routes>
         <Route
           path="/"
@@ -51,12 +49,12 @@ function App({ data }: AppProps = {}) {
         <Route
           path="/favorites"
           element={
-            <PrivateRoute isAuthorized>
-              <Favorites favorites={data?.user?.favorites || []}/>
+            <PrivateRoute>
+              <Favorites favorites={[]}/>
             </PrivateRoute>
           }
         />
-        <Route path="/offer/:id" element={<Offer isAuthorized/>} />
+        <Route path="/offer/:id" element={<Offer />} />
         <Route path="*" element={<Stab404 />} />
       </Routes>
     </div>
