@@ -1,16 +1,30 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
-import type { User } from '../../types';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import type { AuthInfo } from '../../types';
+import { reducer } from '../../store/reducer';
 import Header from './Header';
 
-const user: User = {
-  userID: 1,
-  firstName: 'Oliver',
-  lastName: 'Conner',
+const mockUser: AuthInfo = {
+  token: 'mock-token',
   email: 'Oliver.conner@gmail.com',
-  favoriteCount: 3,
-  favorites: [2, 4, 5],
+  name: 'Oliver Conner',
+  avatarUrl: 'https://avatars.mds.yandex.net/i?id=5497d7f580f843ce76e57a0302e823c3_l-7043025-images-thumbs&n=13',
+  isPro: false,
 };
+
+const createMockStore = (authorizationStatus: 'AUTH' | 'NO_AUTH' | 'UNKNOWN', user: AuthInfo | null = null) =>
+  configureStore({
+    reducer: reducer,
+    preloadedState: {
+      city: 'Paris',
+      offers: [],
+      isLoading: false,
+      authorizationStatus,
+      user,
+    },
+  });
 
 const meta = {
   title: 'Example/Header',
@@ -19,13 +33,6 @@ const meta = {
   parameters: {
     layout: 'fullscreen',
   },
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    ),
-  ],
 } satisfies Meta<typeof Header>;
 
 export default meta;
@@ -33,20 +40,46 @@ type Story = StoryObj<typeof meta>;
 
 export const LoggedIn: Story = {
   args: {
-    user,
     isPageLogin: false,
   },
+  decorators: [
+    (Story) => (
+      <Provider store={createMockStore('AUTH', mockUser)}>
+        <MemoryRouter>
+          <Story />
+        </MemoryRouter>
+      </Provider>
+    ),
+  ],
 };
 
 export const LoggedOut: Story = {
   args: {
     isPageLogin: false,
   },
+  decorators: [
+    (Story) => (
+      <Provider store={createMockStore('NO_AUTH', null)}>
+        <MemoryRouter>
+          <Story />
+        </MemoryRouter>
+      </Provider>
+    ),
+  ],
 };
 
 export const ForLoginPage: Story = {
   args: {
     isPageLogin: true,
   },
+  decorators: [
+    (Story) => (
+      <Provider store={createMockStore('NO_AUTH', null)}>
+        <MemoryRouter>
+          <Story />
+        </MemoryRouter>
+      </Provider>
+    ),
+  ],
 };
 
