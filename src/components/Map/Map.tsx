@@ -6,7 +6,7 @@ import {URL_MARKER_DEFAULT, URL_MARKER_CURRENT} from '../../const';
 import 'leaflet/dist/leaflet.css';
 
 type MapProps = {
-  city: City;
+  city: City | undefined;
   offers: Offer[];
   selectedOffer?: Offer | undefined;
   className?: string;
@@ -31,7 +31,7 @@ function Map(props: MapProps): JSX.Element {
   const map = useMap(mapRef, city);
 
   useEffect(() => {
-    if (map) {
+    if (map && city) {
       const markerLayer = layerGroup().addTo(map);
       offers.forEach((offer) => {
         const marker = new Marker({
@@ -52,7 +52,11 @@ function Map(props: MapProps): JSX.Element {
         map.removeLayer(markerLayer);
       };
     }
-  }, [map, offers, selectedOffer]);
+  }, [map, offers, selectedOffer, city]);
+
+  if (!city) {
+    return <div className={className}></div>;
+  }
 
   return <map className={className} ref={mapRef}></map>;
 }

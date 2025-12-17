@@ -1,7 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
-import { user } from '../../mocks';
+import type { User } from '../../types';
 import Header from './Header';
+
+const user: User = {
+  userID: 1,
+  firstName: 'Oliver',
+  lastName: 'Conner',
+  email: 'Oliver.conner@gmail.com',
+  favoriteCount: 3,
+  favorites: [2, 4, 5],
+};
 
 const meta = {
   title: 'Example/Header',
