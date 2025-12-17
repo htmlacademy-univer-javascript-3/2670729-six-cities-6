@@ -1,14 +1,16 @@
 import { Navigate, useLocation } from 'react-router-dom';
+import { useAppSelector } from '../../store';
+import { getAuthorizationStatus } from '../../store/selectors';
 
 type PrivateRouteProps = {
-  isAuthorized: boolean;
   children: JSX.Element;
 };
 
-function PrivateRoute({ isAuthorized, children }: PrivateRouteProps) {
+function PrivateRoute({ children }: PrivateRouteProps) {
   const location = useLocation();
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
 
-  if (!isAuthorized) {
+  if (authorizationStatus === 'NO_AUTH') {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 

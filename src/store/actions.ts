@@ -1,11 +1,15 @@
-import type { Offer } from '../types';
+import type { Offer, AuthInfo } from '../types';
 import type { AxiosInstance } from 'axios';
 import type { AppDispatch, RootState } from './index';
+import type { AuthorizationStatus } from './reducer';
+import { saveToken, dropToken } from '../api';
 
 export const ActionType = {
   CHANGE_CITY: 'CHANGE_CITY',
   LOAD_OFFERS: 'LOAD_OFFERS',
   SET_LOADING: 'SET_LOADING',
+  REQUIRE_AUTHORIZATION: 'REQUIRE_AUTHORIZATION',
+  SET_USER: 'SET_USER',
 } as const;
 
 export interface ChangeCityAction {
@@ -23,7 +27,17 @@ export interface SetLoadingAction {
   payload: boolean;
 }
 
-export type Action = ChangeCityAction | LoadOffersAction | SetLoadingAction;
+export interface RequireAuthorizationAction {
+  type: typeof ActionType.REQUIRE_AUTHORIZATION;
+  payload: AuthorizationStatus;
+}
+
+export interface SetUserAction {
+  type: typeof ActionType.SET_USER;
+  payload: AuthInfo | null;
+}
+
+export type Action = ChangeCityAction | LoadOffersAction | SetLoadingAction | RequireAuthorizationAction | SetUserAction;
 
 export const changeCity = (city: string): ChangeCityAction => ({
   type: ActionType.CHANGE_CITY,
@@ -38,6 +52,16 @@ export const loadOffers = (offers: Offer[]): LoadOffersAction => ({
 export const setLoading = (isLoading: boolean): SetLoadingAction => ({
   type: ActionType.SET_LOADING,
   payload: isLoading,
+});
+
+export const requireAuthorization = (status: AuthorizationStatus): RequireAuthorizationAction => ({
+  type: ActionType.REQUIRE_AUTHORIZATION,
+  payload: status,
+});
+
+export const setUser = (user: AuthInfo | null): SetUserAction => ({
+  type: ActionType.SET_USER,
+  payload: user,
 });
 
 // Тип для данных с сервера (может отличаться от нашего типа Offer)
@@ -134,5 +158,40 @@ export const fetchOffers = (): ((dispatch: AppDispatch, getState: () => RootStat
       // В случае ошибки не загружаем данные
       dispatch(setLoading(false));
     }
+  };
+
+// Проверка авторизации при старте приложения
+export const checkAuth = (): ((dispatch: AppDispatch, getState: () => RootState, api: AxiosInstance) => Promise<void>) =>
+  async (dispatch: AppDispatch, _getState: () => RootState, api: AxiosInstance): Promise<void> => {
+    try {
+      const { data } = await api.get<AuthInfo>('/login');
+      dispatch(requireAuthorization('AUTH'));
+      dispatch(setUser(data));
+    } catch (error) {
+      dispatch(requireAuthorization('NO_AUTH'));
+      dispatch(setUser(null));
+    }
+  };
+
+// Авторизация пользователя
+export const loginAction = (email: string, password: string): ((dispatch: AppDispatch, getState: () => RootState, api: AxiosInstance) => Promise<void>) =>
+  async (dispatch: AppDispatch, _getState: () => RootState, api: AxiosInstance): Promise<void> => {
+    try {
+      const { data } = await api.post<AuthInfo>('/login', { email, password });
+      saveToken(data.token);
+      dispatch(requireAuthorization('AUTH'));
+      dispatch(setUser(data));
+    } catch (error) {
+      dispatch(requireAuthorization('NO_AUTH'));
+      dispatch(setUser(null));
+      throw error;
+    }
+  };
+
+export const logoutAction = (): ((dispatch: AppDispatch) => void) =>
+  (dispatch: AppDispatch): void => {
+    dropToken();
+    dispatch(requireAuthorization('NO_AUTH'));
+    dispatch(setUser(null));
   };
 
