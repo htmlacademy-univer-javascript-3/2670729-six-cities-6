@@ -28,15 +28,10 @@ function Map(props: MapProps): JSX.Element {
   const {city, offers, selectedOffer, className} = props;
 
   const mapRef = useRef(null);
-  const map = useMap(mapRef, city!);
-
-  // Не рендерим карту, если city не определен
-  if (!city) {
-    return <div className={className}></div>;
-  }
+  const map = useMap(mapRef, city);
 
   useEffect(() => {
-    if (map) {
+    if (map && city) {
       const markerLayer = layerGroup().addTo(map);
       offers.forEach((offer) => {
         const marker = new Marker({
@@ -57,7 +52,11 @@ function Map(props: MapProps): JSX.Element {
         map.removeLayer(markerLayer);
       };
     }
-  }, [map, offers, selectedOffer]);
+  }, [map, offers, selectedOffer, city]);
+
+  if (!city) {
+    return <div className={className}></div>;
+  }
 
   return <map className={className} ref={mapRef}></map>;
 }
