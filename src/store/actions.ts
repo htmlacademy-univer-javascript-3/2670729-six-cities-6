@@ -1,7 +1,7 @@
 import type { Offer, AuthInfo, Review } from '../types';
 import type { AxiosInstance } from 'axios';
 import type { AppDispatch, RootState } from './index';
-import type { AuthorizationStatus } from './reducer';
+import type { AuthorizationStatus } from './auth/reducer';
 import { saveToken, dropToken } from '../api';
 
 export const ActionType = {

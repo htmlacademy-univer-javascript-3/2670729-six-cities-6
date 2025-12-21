@@ -1,4 +1,4 @@
-import {useRef, useEffect} from 'react';
+import {memo, useRef, useEffect} from 'react';
 import {Icon, Marker, layerGroup} from 'leaflet';
 import useMap from '../../hooks/use-map';
 import {City, Offer} from '../../types';
@@ -24,7 +24,7 @@ const currentCustomIcon = new Icon({
   iconAnchor: [20, 40]
 });
 
-function Map(props: MapProps): JSX.Element {
+const Map = memo((props: MapProps): JSX.Element => {
   const {city, offers, selectedOffer, className} = props;
 
   const mapRef = useRef(null);
@@ -59,6 +59,8 @@ function Map(props: MapProps): JSX.Element {
   }
 
   return <map className={className} ref={mapRef}></map>;
-}
+});
+
+Map.displayName = 'Map';
 
 export default Map;

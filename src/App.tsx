@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import Main from './pages/Main';
 import Offer from './pages/Offer';
 import Login from './pages/Login';
@@ -16,25 +17,26 @@ type AppProps = {
 function App({ data }: AppProps = {}) {
   const location = useLocation();
 
-  const getPageModifiers = (pathname: string) => {
+  const pageModifiers = useMemo(() => {
     const modifiers: string[] = [];
-    if (pathname === '/') {
+    if (location.pathname === '/') {
       modifiers.push('page--gray', 'page--main');
-    } else if (pathname === '/login') {
+    } else if (location.pathname === '/login') {
       modifiers.push('page--gray', 'page--login');
-    } else if (pathname === '/favorites') {
+    } else if (location.pathname === '/favorites') {
       if (data?.user?.favoriteCount === 0){
         modifiers.push('page--favorites-empty');
       }
     }
-
     return modifiers;
-  };
+  }, [location.pathname, data?.user?.favoriteCount]);
 
-  const pageModifiers = getPageModifiers(location.pathname);
-  const pageClasses = ['page', ...pageModifiers].filter(Boolean).join(' ');
+  const pageClasses = useMemo(
+    () => ['page', ...pageModifiers].filter(Boolean).join(' '),
+    [pageModifiers]
+  );
 
-  const isPageLogin = location.pathname === '/login';
+  const isPageLogin = useMemo(() => location.pathname === '/login', [location.pathname]);
 
   return (
     <div className={pageClasses}>

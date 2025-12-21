@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { Review } from '../../types';
 import ReviewComponent from '../Review';
 
@@ -6,7 +7,7 @@ export type ReviewsListProps = {
   formatDate: (dateString: string) => string;
 };
 
-const ReviewsList: React.FC<ReviewsListProps> = ({ reviews, formatDate }) => {
+const ReviewsList: React.FC<ReviewsListProps> = memo(({ reviews, formatDate }) => {
   if (reviews.length === 0) {
     return null;
   }
@@ -22,7 +23,9 @@ const ReviewsList: React.FC<ReviewsListProps> = ({ reviews, formatDate }) => {
       ))}
     </ul>
   );
-};
+});
+
+ReviewsList.displayName = 'ReviewsList';
 
 export default ReviewsList;
 

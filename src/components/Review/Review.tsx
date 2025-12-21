@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { Review as ReviewType } from '../../types';
 
 export type ReviewProps = {
@@ -5,7 +6,7 @@ export type ReviewProps = {
   formattedDate: string;
 };
 
-const Review: React.FC<ReviewProps> = ({ review, formattedDate }) => (
+const Review: React.FC<ReviewProps> = memo(({ review, formattedDate }) => (
   <li className="reviews__item">
     <div className="reviews__user user">
       <div className="reviews__avatar-wrapper user__avatar-wrapper">
@@ -37,7 +38,9 @@ const Review: React.FC<ReviewProps> = ({ review, formattedDate }) => (
       </time>
     </div>
   </li>
-);
+));
+
+Review.displayName = 'Review';
 
 export default Review;
 

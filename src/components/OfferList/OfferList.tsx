@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react';
 import Card, { CardProps } from '../Card/Card';
 
 type OfferListProps = {
@@ -6,10 +7,10 @@ type OfferListProps = {
   listClassName?: string;
 };
 
-const OfferList: React.FC<OfferListProps> = ({ cards, onCardHover, listClassName = 'cities__places-list places__list tabs__content' }) => {
-  const handleCardHover = (id: string | null) => {
+const OfferList: React.FC<OfferListProps> = memo(({ cards, onCardHover, listClassName = 'cities__places-list places__list tabs__content' }) => {
+  const handleCardHover = useCallback((id: string | null) => {
     onCardHover?.(id);
-  };
+  }, [onCardHover]);
 
   return (
     <div className={listClassName}>
@@ -23,6 +24,8 @@ const OfferList: React.FC<OfferListProps> = ({ cards, onCardHover, listClassName
       ))}
     </div>
   );
-};
+});
+
+OfferList.displayName = 'OfferList';
 
 export default OfferList;

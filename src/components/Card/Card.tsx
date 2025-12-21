@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import cn from 'classnames';
 
@@ -17,7 +18,7 @@ export type CardProps = {
   imageWrapperClassName?: string;
 };
 
-const Card: React.FC<CardProps> = ({
+const Card: React.FC<CardProps> = memo(({
   id,
   mark,
   priceValue,
@@ -78,6 +79,8 @@ const Card: React.FC<CardProps> = ({
       <p className="place-card__type">{type}</p>
     </div>
   </article>
-);
+));
+
+Card.displayName = 'Card';
 
 export default Card;

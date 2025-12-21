@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Footer from '../../components/Footer';
 import type { Offer } from '../../types';
 
@@ -10,18 +10,20 @@ const Favorites: React.FC<FavoritesProps> = ({ favorites }) => {
   const [offers, setOffers] = useState<Offer[]>([]);
 
   useEffect(() => {
-    // TODO: Загрузка данных из API будет реализована в следующих пунктах
-    // setOffers(getFavoriteOffers(favorites));
+
     setOffers([]);
   }, [favorites]);
 
-  const groupedByCity: Record<string, Offer[]> = offers.reduce((acc, item) => {
-    if (!acc[item.city]) {
-      acc[item.city] = [];
-    }
-    acc[item.city].push(item);
-    return acc;
-  }, {} as Record<string, Offer[]>);
+  const groupedByCity: Record<string, Offer[]> = useMemo(
+    () => offers.reduce((acc, item) => {
+      if (!acc[item.city]) {
+        acc[item.city] = [];
+      }
+      acc[item.city].push(item);
+      return acc;
+    }, {} as Record<string, Offer[]>),
+    [offers]
+  );
 
   return (
     <>
