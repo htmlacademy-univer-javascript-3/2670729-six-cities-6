@@ -1,7 +1,7 @@
 import type { CardProps } from './components/Card/Card';
 
 export interface Offer {
-  id: number;
+  id: string;
   mark: string;
   priceValue: string;
   priceText: string;
@@ -27,8 +27,8 @@ export interface Offer {
 }
 
 export interface Review {
-  id: number;
-  offerID: number;
+  id: string;
+  offerID: string;
   user: {
     name: string;
     avatar: string;
@@ -54,7 +54,7 @@ export interface User {
   lastName: string;
   email: string;
   favoriteCount: number;
-  favorites: number[];
+  favorites: string[];
 }
 
 export type DataType = {

@@ -8,8 +8,8 @@ const formatDate = (dateString: string): string => {
 };
 
 const mockReview: ReviewType = {
-  id: 1,
-  offerID: 1,
+  id: '1',
+  offerID: '1',
   user: {
     name: 'Max',
     avatar: 'img/avatar-max.jpg'
@@ -43,7 +43,7 @@ export const HighRating: Story = {
   args: {
     review: {
       ...mockReview,
-      id: 2,
+      id: '2',
       rating: 5,
       comment: 'Perfect location and amazing views! The apartment was clean and had everything we needed for our stay.',
       user: {
@@ -60,7 +60,7 @@ export const LowRating: Story = {
   args: {
     review: {
       ...mockReview,
-      id: 3,
+      id: '3',
       rating: 2,
       comment: 'The apartment needs some updates. The location is okay but the facilities are outdated.',
       user: {

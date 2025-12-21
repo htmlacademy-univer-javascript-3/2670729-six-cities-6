@@ -2,12 +2,12 @@ import Card, { CardProps } from '../Card/Card';
 
 type OfferListProps = {
   cards: CardProps[];
-  onCardHover?: (id: number | null) => void;
+  onCardHover?: (id: string | null) => void;
   listClassName?: string;
 };
 
 const OfferList: React.FC<OfferListProps> = ({ cards, onCardHover, listClassName = 'cities__places-list places__list tabs__content' }) => {
-  const handleCardHover = (id: number | null) => {
+  const handleCardHover = (id: string | null) => {
     onCardHover?.(id);
   };
 

@@ -8,7 +8,9 @@ import ReviewsList from '../../components/ReviewsList';
 import Map from '../../components/Map';
 import OfferList from '../../components/OfferList';
 import type { CardProps } from '../../components/Card/Card';
-import { useAppSelector } from '../../store';
+import { useAppSelector, useAppDispatch } from '../../store';
+import { fetchOfferById, fetchNearbyOffers, fetchReviews } from '../../store/actions';
+import Spinner from '../../components/Spinner';
 
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
@@ -17,24 +19,69 @@ const formatDate = (dateString: string): string => {
 
 const Offer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const dispatch = useAppDispatch();
   const [offer, setOffer] = useState<OfferType | undefined>(undefined);
+  const [nearOffers, setNearOffers] = useState<OfferType[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isNotFound, setIsNotFound] = useState(false);
   const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
   const isAuthorized = authorizationStatus === 'AUTH';
 
   useEffect(() => {
-    // TODO: Загрузка данных из API будет реализована в следующих пунктах
-    if (id) {
-      // Временная заглушка для устранения ошибок линтера
-      // setOffer и setReviews будут использоваться при подключении API
-      setOffer(undefined);
-      setReviews([]);
-    }
-  }, [id, setOffer, setReviews]);
+    const loadData = async () => {
+      if (!id) {
+        setIsNotFound(true);
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        setIsLoading(true);
+        setIsNotFound(false);
+
+        const [offerData, nearbyData, reviewsData] = await Promise.all([
+          dispatch(fetchOfferById(id)),
+          dispatch(fetchNearbyOffers(id)),
+          dispatch(fetchReviews(id)),
+        ]);
+
+        setOffer(offerData);
+        setNearOffers(nearbyData);
+        setReviews(reviewsData);
+      } catch (error) {
+        if (error && typeof error === 'object' && 'response' in error) {
+          const axiosError = error as { response?: { status?: number } };
+          if (axiosError.response?.status === 404) {
+            setIsNotFound(true);
+          }
+        } else {
+          setIsNotFound(true);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void loadData();
+  }, [id, dispatch]);
+
+  if (isNotFound) {
+    return <Stab404 />;
+  }
+
+  if (isLoading || !offer) {
+    return (
+      <main className="page__main page__main--offer">
+        <div className="container" style={{ display: 'flex', justifyContent: 'center', padding: '50px' }}>
+          <Spinner />
+        </div>
+      </main>
+    );
+  }
 
   // Получаем данные для карты: текущее предложение + 3 ближайших
-  // TODO: Загрузка данных из API будет реализована в следующих пунктах
-  const city: City | undefined = offer ? {
+  const city: City = {
     id: offer.city.toLowerCase(),
     name: offer.city,
     location: {
@@ -42,12 +89,12 @@ const Offer: React.FC = () => {
       longitude: offer.location.longitude,
       zoom: 12
     }
-  } : undefined;
-  const nearOffers: OfferType[] = [];
-  const mapOffers = offer ? [offer, ...nearOffers] : [];
+  };
+  const limitedNearOffers = nearOffers.slice(0, 3);
+  const mapOffers = [offer, ...limitedNearOffers];
 
-  // Преобразуем ближайшие предложения в формат CardProps
-  const nearCards: CardProps[] = nearOffers.map((nearOffer) => ({
+
+  const nearCards: CardProps[] = limitedNearOffers.map((nearOffer) => ({
     id: nearOffer.id,
     mark: nearOffer.mark,
     priceValue: nearOffer.priceValue,
@@ -59,53 +106,20 @@ const Offer: React.FC = () => {
     isFavorite: nearOffer.isFavorite,
   }));
 
-  return offer !== undefined ? (
+  return (
     <main className="page__main page__main--offer">
       <section className="offer">
         <div className="offer__gallery-container container">
           <div className="offer__gallery">
-            <div className="offer__image-wrapper">
-              <img
-                className="offer__image"
-                src="img/room.jpg"
-                alt="Photo studio"
-              />
-            </div>
-            <div className="offer__image-wrapper">
-              <img
-                className="offer__image"
-                src="img/apartment-01.jpg"
-                alt="Photo studio"
-              />
-            </div>
-            <div className="offer__image-wrapper">
-              <img
-                className="offer__image"
-                src="img/apartment-02.jpg"
-                alt="Photo studio"
-              />
-            </div>
-            <div className="offer__image-wrapper">
-              <img
-                className="offer__image"
-                src="img/apartment-03.jpg"
-                alt="Photo studio"
-              />
-            </div>
-            <div className="offer__image-wrapper">
-              <img
-                className="offer__image"
-                src="img/studio-01.jpg"
-                alt="Photo studio"
-              />
-            </div>
-            <div className="offer__image-wrapper">
-              <img
-                className="offer__image"
-                src="img/apartment-01.jpg"
-                alt="Photo studio"
-              />
-            </div>
+            {offer.images.slice(0, 6).map((image, imageIndex) => (
+              <div key={image} className="offer__image-wrapper">
+                <img
+                  className="offer__image"
+                  src={image}
+                  alt={`Photo ${imageIndex + 1}`}
+                />
+              </div>
+            ))}
           </div>
         </div>
         <div className="offer__container container">
@@ -205,18 +219,25 @@ const Offer: React.FC = () => {
               {reviews.length > 0 && (
                 <ReviewsList reviews={reviews} formatDate={formatDate} />
               )}
-              {isAuthorized && <ReviewForm />}
+              {isAuthorized && (
+                <ReviewForm
+                  offerId={offer.id}
+                  onReviewAdded={() => {
+                    void dispatch(fetchReviews(offer.id)).then((reviewsData) => {
+                      setReviews(reviewsData);
+                    });
+                  }}
+                />
+              )}
             </section>
           </div>
         </div>
-        {city && (
-          <Map
-            city={city}
-            offers={mapOffers}
-            selectedOffer={offer}
-            className="offer__map map"
-          />
-        )}
+        <Map
+          city={city}
+          offers={mapOffers}
+          selectedOffer={offer}
+          className="offer__map map"
+        />
       </section>
       <div className="container">
         <section className="near-places places">
@@ -237,8 +258,6 @@ const Offer: React.FC = () => {
         </section>
       </div>
     </main>
-  ) : (
-    <Stab404 />
   );
 };
 

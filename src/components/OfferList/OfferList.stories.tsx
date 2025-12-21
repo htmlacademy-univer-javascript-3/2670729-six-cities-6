@@ -5,7 +5,7 @@ import type { CardProps } from '../Card/Card';
 
 const mockCards: CardProps[] = [
   {
-    id: 1,
+    id: '1',
     mark: 'Premium',
     priceValue: '120',
     priceText: 'night',
@@ -16,7 +16,7 @@ const mockCards: CardProps[] = [
     isFavorite: false
   },
   {
-    id: 2,
+    id: '2',
     mark: '',
     priceValue: '80',
     priceText: 'night',
@@ -27,7 +27,7 @@ const mockCards: CardProps[] = [
     isFavorite: true
   },
   {
-    id: 3,
+    id: '3',
     mark: '',
     priceValue: '132',
     priceText: 'night',
@@ -38,7 +38,7 @@ const mockCards: CardProps[] = [
     isFavorite: false
   },
   {
-    id: 4,
+    id: '4',
     mark: 'Premium',
     priceValue: '180',
     priceText: 'night',

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import cn from 'classnames';
 
 export type CardProps = {
-  id: number;
+  id: string;
   mark: string;
   priceValue: string;
   priceText: string;
