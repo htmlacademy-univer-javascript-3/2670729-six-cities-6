@@ -19,7 +19,7 @@ type MainProps = {
 const Main: React.FC<MainProps> = ({ cities: propCities = [] }) => {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
-  const [activeOfferId, setActiveOfferId] = useState<number | null>(null);
+  const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
   const [sortType, setSortType] = useState<SortType>('Popular');
   const defaultCityId = 'paris';
   const activeCityId = searchParams.get('city') || defaultCityId;

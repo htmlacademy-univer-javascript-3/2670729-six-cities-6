@@ -24,7 +24,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Base: Story = {
   args: {
-    id: 1,
+    id: '1',
     mark: '',
     priceValue: '80',
     priceText: 'night',
@@ -37,7 +37,7 @@ export const Base: Story = {
 };
 export const Premium: Story = {
   args: {
-    id: 2,
+    id: '2',
     mark: 'Premium',
     priceValue: '120',
     priceText: 'night',
@@ -51,7 +51,7 @@ export const Premium: Story = {
 
 export const NearPlace: Story = {
   args: {
-    id: 3,
+    id: '3',
     mark: '',
     priceValue: '132',
     priceText: 'night',
@@ -67,7 +67,7 @@ export const NearPlace: Story = {
 
 export const PremiumNearPlace: Story = {
   args: {
-    id: 4,
+    id: '4',
     mark: 'Premium',
     priceValue: '180',
     priceText: 'night',

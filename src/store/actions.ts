@@ -1,4 +1,4 @@
-import type { Offer, AuthInfo } from '../types';
+import type { Offer, AuthInfo, Review } from '../types';
 import type { AxiosInstance } from 'axios';
 import type { AppDispatch, RootState } from './index';
 import type { AuthorizationStatus } from './reducer';
@@ -66,7 +66,7 @@ export const setUser = (user: AuthInfo | null): SetUserAction => ({
 
 // Тип для данных с сервера (может отличаться от нашего типа Offer)
 interface ServerOffer {
-  id: number;
+  id: string;
   title: string;
   type: string;
   price: number;
@@ -193,5 +193,63 @@ export const logoutAction = (): ((dispatch: AppDispatch) => void) =>
     dropToken();
     dispatch(requireAuthorization('NO_AUTH'));
     dispatch(setUser(null));
+  };
+
+// Тип для Review с сервера
+interface ServerReview {
+  id: string;
+  date: string;
+  user: {
+    name: string;
+    avatarUrl: string;
+    isPro: boolean;
+  };
+  comment: string;
+  rating: number;
+}
+
+// Адаптер для преобразования Review с сервера в наш формат
+const adaptReview = (serverReview: ServerReview, offerId: string): Review => ({
+  id: serverReview.id,
+  offerID: offerId,
+  user: {
+    name: serverReview.user?.name || '',
+    avatar: serverReview.user?.avatarUrl || '',
+  },
+  rating: serverReview.rating,
+  comment: serverReview.comment,
+  date: serverReview.date,
+});
+
+// Загрузка предложения по ID
+export const fetchOfferById = (id: string): ((dispatch: AppDispatch, getState: () => RootState, api: AxiosInstance) => Promise<Offer>) =>
+  async (_dispatch: AppDispatch, _getState: () => RootState, api: AxiosInstance): Promise<Offer> => {
+    const { data } = await api.get<ServerOffer>(`/offers/${id}`);
+    return adaptOffer(data);
+  };
+
+// Загрузка ближайших предложений
+export const fetchNearbyOffers = (id: string): ((dispatch: AppDispatch, getState: () => RootState, api: AxiosInstance) => Promise<Offer[]>) =>
+  async (_dispatch: AppDispatch, _getState: () => RootState, api: AxiosInstance): Promise<Offer[]> => {
+    const { data } = await api.get<ServerOffer[]>(`/offers/${id}/nearby`);
+    return data.map(adaptOffer);
+  };
+
+// Загрузка комментариев для предложения
+export const fetchReviews = (id: string): ((dispatch: AppDispatch, getState: () => RootState, api: AxiosInstance) => Promise<Review[]>) =>
+  async (_dispatch: AppDispatch, _getState: () => RootState, api: AxiosInstance): Promise<Review[]> => {
+    const { data } = await api.get<ServerReview[]>(`/comments/${id}`);
+    // Сортируем от новых к старым
+    const sortedData = [...data].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    // Берем максимум 10 отзывов
+    const limitedData = sortedData.slice(0, 10);
+    return limitedData.map((review) => adaptReview(review, id));
+  };
+
+// Отправка комментария
+export const postReview = (offerId: string, rating: number, comment: string): ((dispatch: AppDispatch, getState: () => RootState, api: AxiosInstance) => Promise<Review>) =>
+  async (_dispatch: AppDispatch, _getState: () => RootState, api: AxiosInstance): Promise<Review> => {
+    const { data } = await api.post<ServerReview>(`/comments/${offerId}`, { rating, comment });
+    return adaptReview(data, offerId);
   };
 

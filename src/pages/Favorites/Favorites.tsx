@@ -3,7 +3,7 @@ import Footer from '../../components/Footer';
 import type { Offer } from '../../types';
 
 type FavoritesProps = {
-  favorites: number[];
+  favorites: string[];
 };
 
 const Favorites: React.FC<FavoritesProps> = ({ favorites }) => {

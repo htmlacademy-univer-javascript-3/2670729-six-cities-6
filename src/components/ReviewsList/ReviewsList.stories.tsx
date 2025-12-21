@@ -9,8 +9,8 @@ const formatDate = (dateString: string): string => {
 
 const mockReviews: Review[] = [
   {
-    id: 1,
-    offerID: 1,
+    id: '1',
+    offerID: '1',
     user: {
       name: 'Max',
       avatar: 'img/avatar-max.jpg'
@@ -20,8 +20,8 @@ const mockReviews: Review[] = [
     date: '2019-04-24'
   },
   {
-    id: 2,
-    offerID: 1,
+    id: '2',
+    offerID: '1',
     user: {
       name: 'Angelina',
       avatar: 'img/avatar-angelina.jpg'
@@ -31,8 +31,8 @@ const mockReviews: Review[] = [
     date: '2019-05-15'
   },
   {
-    id: 3,
-    offerID: 1,
+    id: '3',
+    offerID: '1',
     user: {
       name: 'John',
       avatar: 'img/avatar-max.jpg'

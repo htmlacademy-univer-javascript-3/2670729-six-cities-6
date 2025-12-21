@@ -1,37 +1,91 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, FormEvent } from 'react';
+import { useAppDispatch } from '../../store';
+import { postReview } from '../../store/actions';
 
-const ReviewForm = () => {
+type ReviewFormProps = {
+  offerId: string;
+  onReviewAdded: () => void;
+};
+
+const ReviewForm = ({ offerId, onReviewAdded }: ReviewFormProps) => {
   type ReviewFormData = {
     rating: string;
     review: string;
   };
 
+  const dispatch = useAppDispatch();
   const [formData, setFormData] = useState<ReviewFormData>({
     rating: '',
     review: '',
   });
 
-  const [btDisabled, setBtDisabled] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const isFormValid = (): boolean => {
+    const rating = Number(formData.rating);
+    const reviewLength = formData.review.trim().length;
+    return rating >= 1 && rating <= 5 && reviewLength >= 50 && reviewLength <= 300;
+  };
 
   const handleFieldChange = (evt: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const {name, value} = evt.target;
+    const { name, value } = evt.target;
+    setFormData({ ...formData, [name]: value });
+    setError(null);
+  };
 
-    if (name === 'review' && value.length > 50){
-      setBtDisabled(false);
-    } else {
-      setBtDisabled(true);
+  const handleSubmit = async (evt: FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+
+    if (!isFormValid() || isSubmitting) {
+      return;
     }
 
-    if (name === 'rating' || name === 'review') {
-      setFormData({...formData, [name]: value});
+    try {
+      setIsSubmitting(true);
+      setError(null);
+
+      const rating = Number(formData.rating);
+      const comment = formData.review.trim();
+
+      await dispatch(postReview(offerId, rating, comment));
+
+      // Очищаем форму после успешной отправки
+      setFormData({
+        rating: '',
+        review: '',
+      });
+
+      // Обновляем список комментариев через callback
+      onReviewAdded();
+    } catch (err: unknown) {
+      if (err && typeof err === 'object' && 'response' in err) {
+        const axiosError = err as { response?: { status?: number; data?: { error?: string } } };
+        if (axiosError.response?.status === 400) {
+          setError(axiosError.response.data?.error || 'Invalid data. Please check your review.');
+        } else {
+          setError('Failed to submit review. Please try again.');
+        }
+      } else {
+        setError('Failed to submit review. Please try again.');
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  const btDisabled = !isFormValid() || isSubmitting;
+
   return (
-    <form className="reviews__form form" action="#" method="post">
+    <form className="reviews__form form" action="#" method="post" onSubmit={handleSubmit}>
       <label className="reviews__label form__label" htmlFor="review">
         Your review
       </label>
+      {error && (
+        <div className="reviews__error" style={{ color: 'red', marginBottom: '10px' }}>
+          {error}
+        </div>
+      )}
       <div className="reviews__rating-form form__rating">
         <input
           className="form__rating-input visually-hidden"
@@ -39,7 +93,9 @@ const ReviewForm = () => {
           value="5"
           id="5-stars"
           type="radio"
+          checked={formData.rating === '5'}
           onChange={handleFieldChange}
+          disabled={isSubmitting}
         />
         <label
           htmlFor="5-stars"
@@ -57,7 +113,9 @@ const ReviewForm = () => {
           value="4"
           id="4-stars"
           type="radio"
+          checked={formData.rating === '4'}
           onChange={handleFieldChange}
+          disabled={isSubmitting}
         />
         <label
           htmlFor="4-stars"
@@ -75,7 +133,9 @@ const ReviewForm = () => {
           value="3"
           id="3-stars"
           type="radio"
+          checked={formData.rating === '3'}
           onChange={handleFieldChange}
+          disabled={isSubmitting}
         />
         <label
           htmlFor="3-stars"
@@ -93,7 +153,9 @@ const ReviewForm = () => {
           value="2"
           id="2-stars"
           type="radio"
+          checked={formData.rating === '2'}
           onChange={handleFieldChange}
+          disabled={isSubmitting}
         />
         <label
           htmlFor="2-stars"
@@ -111,7 +173,9 @@ const ReviewForm = () => {
           value="1"
           id="1-star"
           type="radio"
+          checked={formData.rating === '1'}
           onChange={handleFieldChange}
+          disabled={isSubmitting}
         />
         <label
           htmlFor="1-star"
@@ -130,6 +194,9 @@ const ReviewForm = () => {
         placeholder="Tell how was your stay, what you like and what can be improved"
         value={formData.review}
         onChange={handleFieldChange}
+        disabled={isSubmitting}
+        minLength={50}
+        maxLength={300}
       >
       </textarea>
       <div className="reviews__button-wrapper">
@@ -143,7 +210,7 @@ const ReviewForm = () => {
           type="submit"
           disabled={btDisabled}
         >
-          Submit
+          {isSubmitting ? 'Submitting...' : 'Submit'}
         </button>
       </div>
     </form>
