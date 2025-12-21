@@ -1,5 +1,5 @@
 import cn from 'classnames';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import type { Offer as OfferType, Review, City } from '../../types';
 import Stab404 from '../404';
@@ -25,7 +25,7 @@ const Offer: React.FC = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isNotFound, setIsNotFound] = useState(false);
-  const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
+  const authorizationStatus = useAppSelector((state) => state.auth.authorizationStatus);
   const isAuthorized = authorizationStatus === 'AUTH';
 
   useEffect(() => {
@@ -66,6 +66,64 @@ const Offer: React.FC = () => {
     void loadData();
   }, [id, dispatch]);
 
+  // Получаем данные для карты: текущее предложение + 3 ближайших
+  const city: City = useMemo(() => {
+    if (!offer) {
+      return {
+        id: '',
+        name: '',
+        location: {
+          latitude: 0,
+          longitude: 0,
+          zoom: 12
+        }
+      };
+    }
+    return {
+      id: offer.city.toLowerCase(),
+      name: offer.city,
+      location: {
+        latitude: offer.location.latitude,
+        longitude: offer.location.longitude,
+        zoom: 12
+      }
+    };
+  }, [offer]);
+
+  const limitedNearOffers = useMemo(
+    () => nearOffers.slice(0, 3),
+    [nearOffers]
+  );
+
+  const mapOffers = useMemo(
+    () => offer ? [offer, ...limitedNearOffers] : limitedNearOffers,
+    [offer, limitedNearOffers]
+  );
+
+  const nearCards: CardProps[] = useMemo(
+    () => limitedNearOffers.map((nearOffer) => ({
+      id: nearOffer.id,
+      mark: nearOffer.mark,
+      priceValue: nearOffer.priceValue,
+      priceText: nearOffer.priceText,
+      name: nearOffer.name,
+      type: nearOffer.type,
+      rating: nearOffer.rating,
+      image: nearOffer.images[0],
+      isFavorite: nearOffer.isFavorite,
+    })),
+    [limitedNearOffers]
+  );
+
+  const handleReviewAdded = useCallback(() => {
+    if (id) {
+      void dispatch(fetchReviews(id)).then((reviewsData) => {
+        setReviews(reviewsData);
+      });
+    }
+  }, [id, dispatch]);
+
+
   if (isNotFound) {
     return <Stab404 />;
   }
@@ -79,32 +137,6 @@ const Offer: React.FC = () => {
       </main>
     );
   }
-
-  // Получаем данные для карты: текущее предложение + 3 ближайших
-  const city: City = {
-    id: offer.city.toLowerCase(),
-    name: offer.city,
-    location: {
-      latitude: offer.location.latitude,
-      longitude: offer.location.longitude,
-      zoom: 12
-    }
-  };
-  const limitedNearOffers = nearOffers.slice(0, 3);
-  const mapOffers = [offer, ...limitedNearOffers];
-
-
-  const nearCards: CardProps[] = limitedNearOffers.map((nearOffer) => ({
-    id: nearOffer.id,
-    mark: nearOffer.mark,
-    priceValue: nearOffer.priceValue,
-    priceText: nearOffer.priceText,
-    name: nearOffer.name,
-    type: nearOffer.type,
-    rating: nearOffer.rating,
-    image: nearOffer.images[0],
-    isFavorite: nearOffer.isFavorite,
-  }));
 
   return (
     <main className="page__main page__main--offer">
@@ -222,11 +254,7 @@ const Offer: React.FC = () => {
               {isAuthorized && (
                 <ReviewForm
                   offerId={offer.id}
-                  onReviewAdded={() => {
-                    void dispatch(fetchReviews(offer.id)).then((reviewsData) => {
-                      setReviews(reviewsData);
-                    });
-                  }}
+                  onReviewAdded={handleReviewAdded}
                 />
               )}
             </section>

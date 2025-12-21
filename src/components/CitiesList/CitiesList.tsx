@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import type { City } from '../../types';
 
@@ -6,7 +7,7 @@ type CitiesListProps = {
   activeCityId: string;
 };
 
-const CitiesList: React.FC<CitiesListProps> = ({ cities, activeCityId }) => (
+const CitiesList: React.FC<CitiesListProps> = memo(({ cities, activeCityId }) => (
   <div className="tabs">
     <section className="locations container">
       <ul className="locations__list tabs__list">
@@ -29,6 +30,8 @@ const CitiesList: React.FC<CitiesListProps> = ({ cities, activeCityId }) => (
       </ul>
     </section>
   </div>
-);
+));
+
+CitiesList.displayName = 'CitiesList';
 
 export default CitiesList;

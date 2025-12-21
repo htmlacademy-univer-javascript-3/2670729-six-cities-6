@@ -9,11 +9,15 @@ const createMockStore = () =>
   configureStore({
     reducer: reducer,
     preloadedState: {
-      city: 'Paris',
-      offers: [],
-      isLoading: false,
-      authorizationStatus: 'AUTH',
-      user: null,
+      offers: {
+        city: 'Paris',
+        offers: [],
+        isLoading: false,
+      },
+      auth: {
+        authorizationStatus: 'AUTH',
+        user: null,
+      },
     },
   });
 

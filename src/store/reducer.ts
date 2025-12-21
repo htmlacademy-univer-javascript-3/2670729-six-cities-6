@@ -1,53 +1,13 @@
-import type { Offer, AuthInfo } from '../types';
-import { ActionType, type Action } from './actions';
+import { combineReducers } from '@reduxjs/toolkit';
+import { offersReducer } from './offers/reducer';
+import { authReducer } from './auth/reducer';
 
-export type AuthorizationStatus = 'AUTH' | 'NO_AUTH' | 'UNKNOWN';
+export type { AuthorizationStatus } from './auth/reducer';
 
-export interface State {
-  city: string;
-  offers: Offer[];
-  isLoading: boolean;
-  authorizationStatus: AuthorizationStatus;
-  user: AuthInfo | null;
-}
+export const reducer = combineReducers({
+  offers: offersReducer,
+  auth: authReducer,
+});
 
-const initialState: State = {
-  city: 'Paris',
-  offers: [],
-  isLoading: false,
-  authorizationStatus: 'UNKNOWN',
-  user: null,
-};
-
-export const reducer = (state: State = initialState, action: Action): State => {
-  switch (action.type) {
-    case ActionType.CHANGE_CITY:
-      return {
-        ...state,
-        city: action.payload,
-      };
-    case ActionType.LOAD_OFFERS:
-      return {
-        ...state,
-        offers: action.payload,
-      };
-    case ActionType.SET_LOADING:
-      return {
-        ...state,
-        isLoading: action.payload,
-      };
-    case ActionType.REQUIRE_AUTHORIZATION:
-      return {
-        ...state,
-        authorizationStatus: action.payload,
-      };
-    case ActionType.SET_USER:
-      return {
-        ...state,
-        user: action.payload,
-      };
-    default:
-      return state;
-  }
-};
+export type State = ReturnType<typeof reducer>;
 

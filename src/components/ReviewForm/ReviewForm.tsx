@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent, useCallback, useMemo } from 'react';
 import { useAppDispatch } from '../../store';
 import { postReview } from '../../store/actions';
 
@@ -22,22 +22,22 @@ const ReviewForm = ({ offerId, onReviewAdded }: ReviewFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const isFormValid = (): boolean => {
+  const isFormValid = useMemo((): boolean => {
     const rating = Number(formData.rating);
     const reviewLength = formData.review.trim().length;
     return rating >= 1 && rating <= 5 && reviewLength >= 50 && reviewLength <= 300;
-  };
+  }, [formData.rating, formData.review]);
 
-  const handleFieldChange = (evt: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleFieldChange = useCallback((evt: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = evt.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
     setError(null);
-  };
+  }, []);
 
-  const handleSubmit = async (evt: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = useCallback(async (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if (!isFormValid() || isSubmitting) {
+    if (!isFormValid || isSubmitting) {
       return;
     }
 
@@ -72,9 +72,9 @@ const ReviewForm = ({ offerId, onReviewAdded }: ReviewFormProps) => {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [offerId, formData, isFormValid, isSubmitting, dispatch, onReviewAdded]);
 
-  const btDisabled = !isFormValid() || isSubmitting;
+  const btDisabled = !isFormValid || isSubmitting;
 
   return (
     <form className="reviews__form form" action="#" method="post" onSubmit={(evt) => void handleSubmit(evt)}>

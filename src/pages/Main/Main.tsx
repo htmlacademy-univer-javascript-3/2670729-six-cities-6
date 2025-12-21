@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import type { CardProps } from '../../components/Card/Card';
 import OfferList from '../../components/OfferList';
@@ -92,21 +92,31 @@ const Main: React.FC<MainProps> = ({ cities: propCities = [] }) => {
 
   const quantity = sortedOffers.length;
 
-  const selectedOffer = activeOfferId
-    ? sortedOffers.find((offer) => offer.id === activeOfferId)
-    : undefined;
+  const selectedOffer = useMemo(
+    () => activeOfferId
+      ? sortedOffers.find((offer) => offer.id === activeOfferId)
+      : undefined,
+    [activeOfferId, sortedOffers]
+  );
 
-  const cards: CardProps[] = sortedOffers.map((offer) => ({
-    id: offer.id,
-    mark: offer.mark,
-    priceValue: offer.priceValue,
-    priceText: offer.priceText,
-    name: offer.name,
-    type: offer.type,
-    rating: offer.rating,
-    image: offer.images[0],
-    isFavorite: offer.isFavorite,
-  }));
+  const cards: CardProps[] = useMemo(
+    () => sortedOffers.map((offer) => ({
+      id: offer.id,
+      mark: offer.mark,
+      priceValue: offer.priceValue,
+      priceText: offer.priceText,
+      name: offer.name,
+      type: offer.type,
+      rating: offer.rating,
+      image: offer.images[0],
+      isFavorite: offer.isFavorite,
+    })),
+    [sortedOffers]
+  );
+
+  const handleCardHover = useCallback((id: string | null) => {
+    setActiveOfferId(id);
+  }, []);
 
   const isEmpty = quantity === 0;
 
@@ -150,7 +160,7 @@ const Main: React.FC<MainProps> = ({ cities: propCities = [] }) => {
                 {quantity} places to stay in {activeCity?.name || ''}
               </b>
               <SortOptions currentSort={sortType} onSortChange={setSortType} />
-              <OfferList cards={cards} onCardHover={setActiveOfferId} />
+              <OfferList cards={cards} onCardHover={handleCardHover} />
             </section>
             <div className="cities__right-section">
               <Map

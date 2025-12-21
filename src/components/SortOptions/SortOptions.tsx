@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 
 export type SortType = 'Popular' | 'Price: low to high' | 'Price: high to low' | 'Top rated first';
 
@@ -11,17 +11,17 @@ const SortOptions: React.FC<SortOptionsProps> = ({ currentSort, onSortChange }) 
   const [isOpen, setIsOpen] = useState(false);
   const sortRef = useRef<HTMLFormElement>(null);
 
-  const sortOptions: SortType[] = [
+  const sortOptions: SortType[] = useMemo(() => [
     'Popular',
     'Price: low to high',
     'Price: high to low',
     'Top rated first',
-  ];
+  ], []);
 
-  const handleOptionClick = (option: SortType) => {
+  const handleOptionClick = useCallback((option: SortType) => {
     onSortChange(option);
     setIsOpen(false);
-  };
+  }, [onSortChange]);
 
   // Закрываем список при клике вне компонента
   useEffect(() => {

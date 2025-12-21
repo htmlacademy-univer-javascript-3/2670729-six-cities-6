@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../store';
 import { getUser, getAuthorizationStatus } from '../../store/selectors';
@@ -7,15 +8,15 @@ type HeaderProps = {
   isPageLogin: boolean;
 };
 
-const Header: React.FC<HeaderProps> = ({ isPageLogin }) => {
+const Header: React.FC<HeaderProps> = memo(({ isPageLogin }) => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(getUser);
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const isAuthorized = authorizationStatus === 'AUTH';
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     dispatch(logoutAction());
-  };
+  }, [dispatch]);
 
   return (
     <header className="header">
@@ -84,6 +85,8 @@ const Header: React.FC<HeaderProps> = ({ isPageLogin }) => {
       </div>
     </header>
   );
-};
+});
+
+Header.displayName = 'Header';
 
 export default Header;
