@@ -26,6 +26,7 @@ const createMockStore = (authorizationStatus: 'AUTH' | 'NO_AUTH' | 'UNKNOWN', us
       auth: {
         authorizationStatus,
         user,
+        favoriteCount: 0,
       },
     },
   });

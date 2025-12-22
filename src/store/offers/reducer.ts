@@ -30,6 +30,15 @@ export const offersReducer = (state: OffersState = initialState, action: Action)
         ...state,
         isLoading: action.payload,
       };
+    case ActionType.UPDATE_OFFER_FAVORITE:
+      return {
+        ...state,
+        offers: state.offers.map((offer) =>
+          offer.id === action.payload.offerId
+            ? { ...offer, isFavorite: action.payload.isFavorite }
+            : offer
+        ),
+      };
     default:
       return state;
   }

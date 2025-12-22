@@ -1,6 +1,6 @@
 import cn from 'classnames';
 import { useEffect, useState, useMemo, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import type { Offer as OfferType, Review, City } from '../../types';
 import Stab404 from '../404';
 import ReviewForm from '../../components/ReviewForm';
@@ -9,7 +9,8 @@ import Map from '../../components/Map';
 import OfferList from '../../components/OfferList';
 import type { CardProps } from '../../components/Card/Card';
 import { useAppSelector, useAppDispatch } from '../../store';
-import { fetchOfferById, fetchNearbyOffers, fetchReviews } from '../../store/actions';
+import { fetchOfferById, fetchNearbyOffers, fetchReviews, toggleFavorite } from '../../store/actions';
+import { getAuthorizationStatus } from '../../store/selectors';
 import Spinner from '../../components/Spinner';
 
 const formatDate = (dateString: string): string => {
@@ -25,7 +26,8 @@ const Offer: React.FC = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isNotFound, setIsNotFound] = useState(false);
-  const authorizationStatus = useAppSelector((state) => state.auth.authorizationStatus);
+  const navigate = useNavigate();
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const isAuthorized = authorizationStatus === 'AUTH';
 
   useEffect(() => {
@@ -123,6 +125,26 @@ const Offer: React.FC = () => {
     }
   }, [id, dispatch]);
 
+  const handleFavoriteClick = useCallback(() => {
+    if (!id || !offer) {
+      return;
+    }
+
+    if (!isAuthorized) {
+      navigate('/login');
+      return;
+    }
+
+    void dispatch(toggleFavorite(id, !offer.isFavorite)).then(() => {
+      setOffer((prevOffer) => {
+        if (!prevOffer) {
+          return prevOffer;
+        }
+        return { ...prevOffer, isFavorite: !prevOffer.isFavorite };
+      });
+    });
+  }, [id, offer, isAuthorized, navigate, dispatch]);
+
 
   if (isNotFound) {
     return <Stab404 />;
@@ -168,6 +190,7 @@ const Offer: React.FC = () => {
                   'offer__bookmark-button--active': offer.isFavorite,
                 })}
                 type="button"
+                onClick={handleFavoriteClick}
               >
                 <svg className="offer__bookmark-icon" width="31" height="33">
                   <use xlinkHref="#icon-bookmark"></use>

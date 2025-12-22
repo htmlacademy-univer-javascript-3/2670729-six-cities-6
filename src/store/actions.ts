@@ -10,6 +10,8 @@ export const ActionType = {
   SET_LOADING: 'SET_LOADING',
   REQUIRE_AUTHORIZATION: 'REQUIRE_AUTHORIZATION',
   SET_USER: 'SET_USER',
+  UPDATE_OFFER_FAVORITE: 'UPDATE_OFFER_FAVORITE',
+  SET_FAVORITE_COUNT: 'SET_FAVORITE_COUNT',
 } as const;
 
 export interface ChangeCityAction {
@@ -37,7 +39,20 @@ export interface SetUserAction {
   payload: AuthInfo | null;
 }
 
-export type Action = ChangeCityAction | LoadOffersAction | SetLoadingAction | RequireAuthorizationAction | SetUserAction;
+export interface UpdateOfferFavoriteAction {
+  type: typeof ActionType.UPDATE_OFFER_FAVORITE;
+  payload: {
+    offerId: string;
+    isFavorite: boolean;
+  };
+}
+
+export interface SetFavoriteCountAction {
+  type: typeof ActionType.SET_FAVORITE_COUNT;
+  payload: number;
+}
+
+export type Action = ChangeCityAction | LoadOffersAction | SetLoadingAction | RequireAuthorizationAction | SetUserAction | UpdateOfferFavoriteAction | SetFavoriteCountAction;
 
 export const changeCity = (city: string): ChangeCityAction => ({
   type: ActionType.CHANGE_CITY,
@@ -167,9 +182,26 @@ export const checkAuth = (): ((dispatch: AppDispatch, getState: () => RootState,
       const { data } = await api.get<AuthInfo>('/login');
       dispatch(requireAuthorization('AUTH'));
       dispatch(setUser(data));
+
+      try {
+        const favoritesResponse = await api.get<ServerOffer[]>('/favorite');
+        dispatch({
+          type: ActionType.SET_FAVORITE_COUNT,
+          payload: favoritesResponse.data.length,
+        });
+      } catch {
+        dispatch({
+          type: ActionType.SET_FAVORITE_COUNT,
+          payload: 0,
+        });
+      }
     } catch (error) {
       dispatch(requireAuthorization('NO_AUTH'));
       dispatch(setUser(null));
+      dispatch({
+        type: ActionType.SET_FAVORITE_COUNT,
+        payload: 0,
+      });
     }
   };
 
@@ -251,5 +283,42 @@ export const postReview = (offerId: string, rating: number, comment: string): ((
   async (_dispatch: AppDispatch, _getState: () => RootState, api: AxiosInstance): Promise<Review> => {
     const { data } = await api.post<ServerReview>(`/comments/${offerId}`, { rating, comment });
     return adaptReview(data, offerId);
+  };
+
+// Добавление/удаление из избранного
+export const toggleFavorite = (offerId: string, isFavorite: boolean): ((dispatch: AppDispatch, getState: () => RootState, api: AxiosInstance) => Promise<void>) =>
+  async (dispatch: AppDispatch, getState: () => RootState, api: AxiosInstance): Promise<void> => {
+    const { data } = await api.post<ServerOffer>(`/favorite/${offerId}/${isFavorite ? 1 : 0}`);
+    const adaptedOffer = adaptOffer(data);
+
+    dispatch({
+      type: ActionType.UPDATE_OFFER_FAVORITE,
+      payload: {
+        offerId,
+        isFavorite: adaptedOffer.isFavorite,
+      },
+    });
+
+    try {
+      const favoritesResponse = await api.get<ServerOffer[]>('/favorite');
+      dispatch({
+        type: ActionType.SET_FAVORITE_COUNT,
+        payload: favoritesResponse.data.length,
+      });
+    } catch {
+      const favoriteCount = getState().auth.favoriteCount || 0;
+      const newCount = adaptedOffer.isFavorite ? favoriteCount + 1 : Math.max(0, favoriteCount - 1);
+      dispatch({
+        type: ActionType.SET_FAVORITE_COUNT,
+        payload: newCount,
+      });
+    }
+  };
+
+// Загрузка избранных предложений
+export const fetchFavorites = (): ((dispatch: AppDispatch, getState: () => RootState, api: AxiosInstance) => Promise<Offer[]>) =>
+  async (_dispatch: AppDispatch, _getState: () => RootState, api: AxiosInstance): Promise<Offer[]> => {
+    const { data } = await api.get<ServerOffer[]>('/favorite');
+    return data.map(adaptOffer);
   };
 
