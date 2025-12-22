@@ -14,6 +14,8 @@ export const getAuthorizationStatus = (state: RootState): AuthorizationStatus =>
 
 export const getUser = (state: RootState): AuthInfo | null => state.auth.user;
 
+export const getFavoriteCount = (state: RootState): number => state.auth.favoriteCount;
+
 // Мемоизированный селектор для фильтрации предложений по городу
 export const getOffersByCity = createSelector(
   [getCity, getOffers],

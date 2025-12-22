@@ -52,7 +52,7 @@ function App({ data }: AppProps = {}) {
           path="/favorites"
           element={
             <PrivateRoute>
-              <Favorites favorites={[]}/>
+              <Favorites />
             </PrivateRoute>
           }
         />

@@ -7,6 +7,7 @@ import SortOptions, { type SortType } from '../../components/SortOptions';
 import type { City, Offer } from '../../types';
 import Map from '../../components/Map';
 import Spinner from '../../components/Spinner';
+import EmptyMainState from '../../components/EmptyMainState';
 import { useSearchParams } from 'react-router-dom';
 import { getOffersByCity, getOffers, getIsLoading } from '../../store/selectors';
 import { changeCity } from '../../store/actions';
@@ -139,18 +140,7 @@ const Main: React.FC<MainProps> = ({ cities: propCities = [] }) => {
           </div>
         )}
         {!isLoading && isEmpty && (
-          <div className="cities__places-container cities__places-container--empty container">
-            <section className="cities__no-places">
-              <div className="cities__status-wrapper tabs__content">
-                <b className="cities__status">No places to stay available</b>
-                <p className="cities__status-description">
-                  We could not find any property available at the moment in{' '}
-                  {activeCity?.name || ''}
-                </p>
-              </div>
-            </section>
-            <div className="cities__right-section"></div>
-          </div>
+          <EmptyMainState cityName={activeCity?.name || ''} />
         )}
         {!isLoading && !isEmpty && (
           <div className="cities__places-container container">

@@ -6,11 +6,13 @@ export type AuthorizationStatus = 'AUTH' | 'NO_AUTH' | 'UNKNOWN';
 export interface AuthState {
   authorizationStatus: AuthorizationStatus;
   user: AuthInfo | null;
+  favoriteCount: number;
 }
 
 const initialState: AuthState = {
   authorizationStatus: 'UNKNOWN',
   user: null,
+  favoriteCount: 0,
 };
 
 export const authReducer = (state: AuthState = initialState, action: Action): AuthState => {
@@ -24,6 +26,11 @@ export const authReducer = (state: AuthState = initialState, action: Action): Au
       return {
         ...state,
         user: action.payload,
+      };
+    case ActionType.SET_FAVORITE_COUNT:
+      return {
+        ...state,
+        favoriteCount: action.payload,
       };
     default:
       return state;

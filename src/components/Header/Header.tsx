@@ -1,7 +1,7 @@
 import { memo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../store';
-import { getUser, getAuthorizationStatus } from '../../store/selectors';
+import { getUser, getAuthorizationStatus, getFavoriteCount } from '../../store/selectors';
 import { logoutAction } from '../../store/actions';
 
 type HeaderProps = {
@@ -12,6 +12,7 @@ const Header: React.FC<HeaderProps> = memo(({ isPageLogin }) => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(getUser);
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
+  const favoriteCount = useAppSelector(getFavoriteCount);
   const isAuthorized = authorizationStatus === 'AUTH';
 
   const handleLogout = useCallback(() => {
@@ -54,6 +55,9 @@ const Header: React.FC<HeaderProps> = memo(({ isPageLogin }) => {
                       <span className="header__user-name user__name">
                         {user.email}
                       </span>
+                      {favoriteCount > 0 && (
+                        <span className="header__favorite-count">{favoriteCount}</span>
+                      )}
                     </Link>
                   </li>
                   <li className="header__nav-item">
