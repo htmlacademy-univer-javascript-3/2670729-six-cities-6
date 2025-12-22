@@ -17,6 +17,7 @@ const createMockStore = () =>
       auth: {
         authorizationStatus: 'AUTH',
         user: null,
+        favoriteCount: 0,
       },
     },
   });

@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import { reducer } from '../../store/reducer';
 import OfferList from './OfferList';
 import type { CardProps } from '../Card/Card';
 
@@ -50,6 +53,23 @@ const mockCards: CardProps[] = [
   }
 ];
 
+const createMockStore = () =>
+  configureStore({
+    reducer: reducer,
+    preloadedState: {
+      offers: {
+        city: 'Paris',
+        offers: [],
+        isLoading: false,
+      },
+      auth: {
+        authorizationStatus: 'NO_AUTH',
+        user: null,
+        favoriteCount: 0,
+      },
+    },
+  });
+
 const meta = {
   title: 'Example/OfferList',
   component: OfferList,
@@ -59,9 +79,11 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
+      <Provider store={createMockStore()}>
+        <MemoryRouter>
+          <Story />
+        </MemoryRouter>
+      </Provider>
     ),
   ],
 } satisfies Meta<typeof OfferList>;
