@@ -63,7 +63,7 @@ const initialState: OffersState = {
 
 describe('offersReducer', () => {
   it('should return initial state when state is undefined', () => {
-    const action = { type: 'UNKNOWN_ACTION' } as Action;
+    const action = { type: 'UNKNOWN_ACTION' } as unknown as Action;
     const result = offersReducer(undefined, action);
     expect(result).toEqual(initialState);
   });
@@ -74,7 +74,7 @@ describe('offersReducer', () => {
       isLoading: true,
       city: 'Amsterdam',
     };
-    const action = { type: 'UNKNOWN_ACTION' } as Action;
+    const action = { type: 'UNKNOWN_ACTION' } as unknown as Action;
     const result = offersReducer(currentState, action);
     expect(result).toBe(currentState);
   });

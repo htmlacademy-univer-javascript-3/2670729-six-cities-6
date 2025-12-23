@@ -39,7 +39,7 @@ const mockUser: AuthInfo = {
 
 describe('reducer', () => {
   it('should return initial state when state is undefined', () => {
-    const action = { type: 'UNKNOWN_ACTION' } as Action;
+    const action = { type: 'UNKNOWN_ACTION' } as unknown as Action;
     const result = reducer(undefined, action);
     expect(result).toEqual({
       offers: {
@@ -162,8 +162,8 @@ describe('reducer', () => {
   });
 
   it('should not modify state for unknown actions', () => {
-    const initialState = reducer(undefined, { type: 'UNKNOWN' } as Action);
-    const action = { type: 'ANOTHER_UNKNOWN' } as Action;
+    const initialState = reducer(undefined, { type: 'UNKNOWN' } as unknown as Action);
+    const action = { type: 'ANOTHER_UNKNOWN' } as unknown as Action;
     const result = reducer(initialState, action);
     expect(result).toBe(initialState);
   });

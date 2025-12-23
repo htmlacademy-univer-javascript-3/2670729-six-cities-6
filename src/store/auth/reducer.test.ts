@@ -19,7 +19,7 @@ const initialState: AuthState = {
 
 describe('authReducer', () => {
   it('should return initial state when state is undefined', () => {
-    const action = { type: 'UNKNOWN_ACTION' } as Action;
+    const action = { type: 'UNKNOWN_ACTION' } as unknown as Action;
     const result = authReducer(undefined, action);
     expect(result).toEqual(initialState);
   });
@@ -30,7 +30,7 @@ describe('authReducer', () => {
       user: mockUser,
       favoriteCount: 5,
     };
-    const action = { type: 'UNKNOWN_ACTION' } as Action;
+    const action = { type: 'UNKNOWN_ACTION' } as unknown as Action;
     const result = authReducer(currentState, action);
     expect(result).toBe(currentState);
   });
