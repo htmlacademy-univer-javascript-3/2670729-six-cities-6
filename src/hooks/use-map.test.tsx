@@ -146,9 +146,9 @@ describe('useMap', () => {
 
     // Ждем обновления
     await waitFor(() => {
-      const mapInstance = result.current;
-      if (mapInstance) {
-        const instanceWithSetView = mapInstance as unknown as { setView: ReturnType<typeof vi.fn> };
+      const currentMapInstance = result.current;
+      if (currentMapInstance) {
+        const instanceWithSetView = currentMapInstance as unknown as { setView: ReturnType<typeof vi.fn> };
         expect(instanceWithSetView.setView).toHaveBeenCalledWith(
           [newCity.location.latitude, newCity.location.longitude],
           newCity.location.zoom
