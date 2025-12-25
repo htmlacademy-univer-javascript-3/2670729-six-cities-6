@@ -1,8 +1,10 @@
 import { useState, FormEvent } from 'react';
-import { Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { Navigate, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../store';
 import { getAuthorizationStatus } from '../../store/selectors';
 import { loginAction } from '../../store/actions';
+
+const CITIES = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
 
 const Login = () => {
   const dispatch = useAppDispatch();
@@ -12,6 +14,10 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [randomCity] = useState(() => {
+    const randomIndex = Math.floor(Math.random() * CITIES.length);
+    return CITIES[randomIndex].toLowerCase();
+  });
 
   // Если пользователь уже авторизован, перенаправляем на главную
   if (authorizationStatus === 'AUTH') {
@@ -97,9 +103,9 @@ const Login = () => {
         </section>
         <section className="locations locations--login locations--current">
           <div className="locations__item">
-            <a className="locations__item-link" href="#">
-              <span>Amsterdam</span>
-            </a>
+            <Link className="locations__item-link" to={`/?city=${randomCity}`}>
+              <span>{CITIES.find((city) => city.toLowerCase() === randomCity) || 'Amsterdam'}</span>
+            </Link>
           </div>
         </section>
       </div>

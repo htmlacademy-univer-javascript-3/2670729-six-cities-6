@@ -12,6 +12,7 @@ import { useAppSelector, useAppDispatch } from '../../store';
 import { fetchOfferById, fetchNearbyOffers, fetchReviews, toggleFavorite } from '../../store/actions';
 import { getAuthorizationStatus } from '../../store/selectors';
 import Spinner from '../../components/Spinner';
+import { formatHousingType } from '../../const';
 
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
@@ -202,7 +203,7 @@ const Offer: React.FC = () => {
             </div>
             <div className="offer__rating rating">
               <div className="offer__stars rating__stars">
-                <span style={{ width: `${offer.rating * 20}%` }}></span>
+                <span style={{ width: `${Math.round(offer.rating) * 20}%` }}></span>
                 <span className="visually-hidden">Rating</span>
               </div>
               <span className="offer__rating-value rating__value">
@@ -211,13 +212,13 @@ const Offer: React.FC = () => {
             </div>
             <ul className="offer__features">
               <li className="offer__feature offer__feature--entire">
-                {offer.type}
+                {formatHousingType(offer.type)}
               </li>
               <li className="offer__feature offer__feature--bedrooms">
-                {offer.bedrooms} Bedrooms
+                {offer.bedrooms} {offer.bedrooms === 1 ? 'Bedroom' : 'Bedrooms'}
               </li>
               <li className="offer__feature offer__feature--adults">
-                Max {offer.maxAdults} adults
+                Max {offer.maxAdults} {offer.maxAdults === 1 ? 'adult' : 'adults'}
               </li>
             </ul>
             <div className="offer__price">
@@ -237,7 +238,11 @@ const Offer: React.FC = () => {
             <div className="offer__host">
               <h2 className="offer__host-title">Meet the host</h2>
               <div className="offer__host-user user">
-                <div className="offer__avatar-wrapper offer__avatar-wrapper--pro user__avatar-wrapper">
+                <div
+                  className={cn('offer__avatar-wrapper', 'user__avatar-wrapper', {
+                    'offer__avatar-wrapper--pro': offer.host.isPro,
+                  })}
+                >
                   <img
                     className="offer__avatar user__avatar"
                     src={offer.host.avatar}

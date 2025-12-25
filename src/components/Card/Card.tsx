@@ -4,6 +4,7 @@ import cn from 'classnames';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { toggleFavorite } from '../../store/actions';
 import { getAuthorizationStatus } from '../../store/selectors';
+import { formatHousingType } from '../../const';
 
 export type CardProps = {
   id: string;
@@ -93,14 +94,14 @@ const Card: React.FC<CardProps> = memo(({
         </div>
         <div className="place-card__rating rating">
           <div className="place-card__stars rating__stars">
-            <span style={{ width: `${rating * 20}%` }}></span>
+            <span style={{ width: `${Math.round(rating) * 20}%` }}></span>
             <span className="visually-hidden">Rating</span>
           </div>
         </div>
         <h2 className="place-card__name">
           <Link to={`/offer/${id}`}>{name}</Link>
         </h2>
-        <p className="place-card__type">{type}</p>
+        <p className="place-card__type">{formatHousingType(type)}</p>
       </div>
     </article>
   );
