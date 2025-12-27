@@ -62,7 +62,7 @@ describe('Card', () => {
     expect(screen.getByText('Premium')).toBeInTheDocument();
     expect(screen.getByText('€120')).toBeInTheDocument();
     expect(screen.getByText('/ night')).toBeInTheDocument();
-    expect(screen.getByText('apartment')).toBeInTheDocument();
+    expect(screen.getByText('Apartment')).toBeInTheDocument();
   });
 
   it('should render card without mark when mark is empty', () => {
