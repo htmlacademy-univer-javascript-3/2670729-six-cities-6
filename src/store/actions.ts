@@ -3,15 +3,16 @@ import type { AxiosInstance } from 'axios';
 import type { AppDispatch, RootState } from './index';
 import type { AuthorizationStatus } from './auth/reducer';
 import { saveToken, dropToken } from '../api';
+import { ReviewsLimit } from '../const';
 
 export const ActionType = {
-  CHANGE_CITY: 'CHANGE_CITY',
-  LOAD_OFFERS: 'LOAD_OFFERS',
-  SET_LOADING: 'SET_LOADING',
-  REQUIRE_AUTHORIZATION: 'REQUIRE_AUTHORIZATION',
-  SET_USER: 'SET_USER',
-  UPDATE_OFFER_FAVORITE: 'UPDATE_OFFER_FAVORITE',
-  SET_FAVORITE_COUNT: 'SET_FAVORITE_COUNT',
+  CHANGE_CITY: 'offers/changeCity',
+  LOAD_OFFERS: 'offers/loadOffers',
+  SET_LOADING: 'offers/setLoading',
+  REQUIRE_AUTHORIZATION: 'auth/requireAuthorization',
+  SET_USER: 'auth/setUser',
+  UPDATE_OFFER_FAVORITE: 'offers/updateOfferFavorite',
+  SET_FAVORITE_COUNT: 'auth/setFavoriteCount',
 } as const;
 
 export interface ChangeCityAction {
@@ -273,8 +274,8 @@ export const fetchReviews = (id: string): ((dispatch: AppDispatch, getState: () 
     const { data } = await api.get<ServerReview[]>(`/comments/${id}`);
     // Сортируем от новых к старым
     const sortedData = [...data].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    // Берем максимум 10 отзывов
-    const limitedData = sortedData.slice(0, 10);
+    // Берем максимум отзывов
+    const limitedData = sortedData.slice(0, ReviewsLimit.MAX);
     return limitedData.map((review) => adaptReview(review, id));
   };
 

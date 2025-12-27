@@ -188,7 +188,6 @@ template {
 body,
 html {
   width: 100%;
-  min-width: 1144px;
   margin: 0;
   padding: 0;
   font-family: rubik, arial, sans-serif;
@@ -242,11 +241,26 @@ map{
   overflow: hidden;
 }
 .container {
-  width: 1144px;
+  width: 100%;
+  max-width: 1144px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 58px;
-  padding-right: 58px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding-left: 58px;
+    padding-right: 58px;
+  }
 }
 .button {
   padding: 0;
@@ -275,13 +289,14 @@ map{
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
   flex-direction: column;
-  width: 1144px;
+  max-width: 1144px;
+  width: 100%;
   margin-left: auto;
   margin-right: auto;
   background-image: linear-gradient(to right, #f5f5f5 509px, transparent 509px),
     url(../img/amsterdam.jpg);
   background-position: top left, right top;
-  height: 100vh;
+  min-height: 100vh;
   background-size: auto, auto 100%;
   background-repeat: no-repeat, no-repeat;
   overflow: hidden;
@@ -804,9 +819,13 @@ map{
 }
 .place-card__image-wrapper {
   margin-bottom: 9px;
+  width: 100%;
+  overflow: hidden;
 }
 .place-card__image {
   display: block;
+  width: 100%;
+  height: auto;
   border-radius: 4px;
 }
 .place-card__info {
@@ -1639,7 +1658,7 @@ map{
 .login::after {
   content: '';
   position: absolute;
-  width: 12.03vh;
+  width: 38.03vh;
   min-width: 195px;
   height: 100vh;
   min-height: 450px;
@@ -1716,6 +1735,16 @@ map{
   width: 244px;
   margin-right: 20px;
 }
+.favorites__places {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+}
 .favorites__card {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1779,4 +1808,521 @@ map{
 .header__logo-link:not(.header__logo-link--active):hover {
   opacity: 0.5;
 }
+
+/* Responsive Design */
+
+/* Small mobile styles (< 480px) */
+@media (max-width: 479px) {
+  .cities__card {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+  }
+
+  .near-places__card {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .places__sorting-arrow {
+    right: 8px;
+  }
+
+  .places__options--custom {
+    left: 0;
+    right: 0;
+    width: 100%;
+  }
+}
+
+/* Mobile styles (< 768px) */
+@media (max-width: 767px) {
+  /* Header */
+  .header__wrapper {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: start;
+    -ms-flex-align: start;
+    align-items: flex-start;
+    padding: 16px;
+  }
+
+  .header__nav {
+    width: 100%;
+    margin-top: 16px;
+    margin-left: 0;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+  }
+
+  .header__left {
+    width: 100%;
+  }
+
+  /* Main page - Cities container */
+  .page__main--index {
+    overflow-y: visible;
+    min-height: auto;
+  }
+
+  .cities {
+    overflow-y: visible;
+    -webkit-box-flex: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+  }
+
+  .cities__places-container {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+
+  .cities__places {
+    width: 100%;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    overflow-y: visible;
+  }
+
+  .cities__right-section {
+    width: 100%;
+    height: 400px;
+    margin-top: 16px;
+    -webkit-box-flex: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+  }
+
+  .cities__map {
+    width: 100%;
+    height: 100%;
+    background-position: center;
+  }
+
+  .places__found {
+    font-size: 20px;
+    padding-left: 0;
+  }
+
+  .cities__places-list {
+    margin-left: -8px;
+    padding-left: 0;
+  }
+
+  .cities__card {
+    width: calc(50% - 8px);
+    margin-left: 8px;
+    margin-bottom: 16px;
+    max-width: 260px;
+  }
+
+  .places__sorting {
+    padding-left: 0;
+  }
+
+  /* Offer page */
+  .offer__gallery-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .offer__gallery {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .offer__gallery::before,
+  .offer__gallery::after {
+    display: none;
+  }
+
+  .offer__image-wrapper {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 4px;
+  }
+
+  .offer__image-wrapper:nth-child(3n) {
+    margin-right: 0;
+  }
+
+  .offer__image {
+    width: 100%;
+    height: auto;
+    min-height: 200px;
+    -o-object-fit: cover;
+    object-fit: cover;
+  }
+
+  .offer__name {
+    font-size: 24px;
+    padding: 0 16px;
+  }
+
+  .offer__bookmark-button {
+    top: 20px;
+    right: 20px;
+  }
+
+  .offer__wrapper {
+    max-width: 100%;
+    padding: 0 16px;
+  }
+
+  .offer__features {
+    margin-left: 0;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+  }
+
+  .offer__feature {
+    margin-left: 16px;
+    margin-bottom: 8px;
+  }
+
+  .offer__price {
+    margin-bottom: 32px;
+  }
+
+  .offer__price::before,
+  .offer__price::after {
+    display: none;
+  }
+
+  .offer__map {
+    width: calc(100% - 32px);
+    height: 400px;
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+
+  .reviews__form {
+    margin-right: 0;
+    padding-left: 0;
+  }
+
+  .reviews__textarea {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .reviews__button-wrapper {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+
+  .reviews__help {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .reviews__submit {
+    width: 100%;
+  }
+
+  /* Favorites page */
+  .favorites__locations-items {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+
+  .favorites__locations {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 16px;
+  }
+
+  .favorites__card {
+    width: 100%;
+    max-width: 100%;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+
+  .favorites__image-wrapper {
+    width: 100%;
+    min-width: 100%;
+    margin-right: 0;
+    margin-bottom: 12px;
+  }
+
+  .favorites__places {
+    width: 100%;
+  }
+
+  .favorites__title {
+    font-size: 24px;
+  }
+
+  .favorites__status-wrapper {
+    width: 100%;
+    max-width: 420px;
+    padding: 48px 16px;
+  }
+
+  .favorites {
+    padding: 0 16px 48px;
+  }
+
+  .favorites--empty {
+    padding: 0 16px 48px;
+  }
+
+  /* Login page */
+  .page--login {
+    background-image: linear-gradient(to bottom, #f5f5f5 50%, transparent 50%),
+      url(../img/amsterdam.jpg);
+    background-position: top left, center bottom;
+    background-size: 100% auto, cover;
+  }
+
+  .page__login-container {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .login {
+    width: 100%;
+    max-width: 520px;
+    padding-top: 32px;
+    padding-right: 16px;
+    padding-left: 16px;
+    margin: 0 auto;
+  }
+
+  .login::after {
+    display: none;
+  }
+
+  .login__form {
+    width: 100%;
+  }
+
+  .locations--login {
+    padding: 32px 16px;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+  }
+
+  /* Locations list */
+  .locations__list {
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    padding: 12px 8px 20px;
+  }
+
+  .locations__item {
+    margin-right: 8px;
+    margin-bottom: 8px;
+  }
+
+  .locations__item-link {
+    padding: 6px 12px 5px 8px;
+    font-size: 14px;
+  }
+
+  .favorites__locations .locations__item-link {
+    min-width: 100px;
+    padding: 6px 10px 5px 10px;
+    font-size: 14px;
+  }
+
+  /* Cities status */
+  .cities__status-wrapper {
+    padding: 32px 16px;
+  }
+
+  .cities__status {
+    font-size: 24px;
+  }
+
+  .cities__no-places {
+    width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  /* Near places */
+  .near-places {
+    margin: 0 16px;
+  }
+
+  .near-places__list {
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+  }
+
+  .near-places__card {
+    width: calc(50% - 8px);
+    margin-bottom: 16px;
+  }
+
+  /* Offer inside list */
+  .offer__inside-list {
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+  }
+
+  /* Review item */
+  .reviews__item {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .reviews__user {
+    margin-right: 0;
+    margin-bottom: 12px;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 32px 16px;
+  }
+}
+
+/* Tablet styles (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Main page */
+  .cities__places {
+    width: 55%;
+  }
+
+  .cities__right-section {
+    width: 45%;
+  }
+
+  .cities__card {
+    width: calc(50% - 8px);
+    max-width: 260px;
+  }
+
+  /* Offer page */
+  .offer__gallery {
+    width: 100%;
+    max-width: 700px;
+  }
+
+  .offer__image-wrapper {
+    width: calc(50% - 4px);
+    margin-right: 4px;
+  }
+
+  .offer__image-wrapper:nth-child(3n) {
+    margin-right: 4px;
+  }
+
+  .offer__image-wrapper:nth-child(2n) {
+    margin-right: 0;
+  }
+
+  .offer__map {
+    width: calc(100% - 64px);
+    margin-left: 32px;
+    margin-right: 32px;
+  }
+
+  .reviews__textarea {
+    width: 100%;
+    max-width: 568px;
+  }
+
+  .reviews__form {
+    padding-left: 0;
+  }
+
+  /* Favorites page */
+  .favorites__locations-items {
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+  }
+
+  .favorites__locations {
+    width: 100%;
+    margin-bottom: 16px;
+    margin-right: 0;
+  }
+
+  .favorites__places {
+    width: 100%;
+  }
+
+  .favorites__card {
+    width: 100%;
+    max-width: 500px;
+  }
+
+  /* Login page */
+  .page--login {
+    background-image: linear-gradient(to right, #f5f5f5 50%, transparent 50%),
+      url(../img/amsterdam.jpg);
+    background-size: 50% 100%, auto 100%;
+  }
+
+  /* Header adjustments */
+  .header__nav {
+    margin-left: 20px;
+  }
+
+  /* Locations list - slightly smaller on tablets */
+  .locations__list {
+    padding: 14px 8px 28px;
+  }
+
+  .locations__item {
+    margin-right: 20px;
+    margin-bottom: 14px;
+  }
+
+  .locations__item-link {
+    padding: 7px 16px 5px 10px;
+    font-size: 16px;
+  }
+}
+
+/* Large screens (>= 1024px) - ensure proper layout */
+@media (min-width: 1024px) {
+  .cities__places {
+    width: 572px;
+  }
+
+  .cities__right-section {
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+  }
+
+  .cities__card {
+    width: 260px;
+  }
+}
+
 /*# sourceMappingURL=main.css.map */

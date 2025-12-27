@@ -20,6 +20,7 @@ import { reducer } from './reducer';
 import type { RootState } from './index';
 import type { AuthInfo } from '../types';
 import * as apiModule from '../api';
+import { ReviewsLimit } from '../const';
 
 // Мокируем функции работы с токеном
 vi.mock('../api', () => ({
@@ -303,7 +304,7 @@ describe('Async actions', () => {
       }
     });
 
-    it('should limit reviews to 10', async () => {
+    it('should limit reviews to ReviewsLimit.MAX', async () => {
       const reviews = Array.from({ length: 15 }, (_, i) => ({
         ...mockServerReview,
         id: String(i + 1),
@@ -315,7 +316,7 @@ describe('Async actions', () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/await-thenable
       const result = (await store.dispatch(fetchReviews('1') as ThunkAction)) as unknown as import('../types').Review[];
 
-      expect(result).toHaveLength(10);
+      expect(result).toHaveLength(ReviewsLimit.MAX);
     });
   });
 
