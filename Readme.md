@@ -4,9 +4,10 @@
 * Наставник: [Андрей Осипук](https://htmlacademy.ru/profile/id616431).
 
 ## Демонстрация
-Демонстрация проекта доступна на [CodeSandBox](https://codesandbox.io/p/github/aka-Steam/six-cities/module4-task1)
+Демонстрация проекта доступна на [CodeSandBox](https://codesandbox.io/p/github/aka-Steam/six-cities/master) _(иногда могут возникать проблемы с отображением меток на карте, локально все работает стабильно)_
 
-Посмотреть Storybook можно в [Chromatic](https://6900c6c650a811417c5490d8-wixunnafsl.chromatic.com/)
+
+Посмотреть Storybook можно в [Chromatic](https://6900c6c650a811417c5490d8-cyjcnaprbw.chromatic.com/?path=/story/example-spinner--default)
 
 ---
 
