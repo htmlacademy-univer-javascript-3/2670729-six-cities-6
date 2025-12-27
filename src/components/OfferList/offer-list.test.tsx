@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import OfferList from './OfferList';
+import OfferList from './offer-list';
 import type { CardProps } from '../Card/card';
 import { reducer } from '../../store/reducer';
 

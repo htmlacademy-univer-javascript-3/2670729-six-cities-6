@@ -1,4 +1,4 @@
-import type { CardProps } from './components/Card/Card';
+import type { CardProps } from './components/card/card';
 
 export interface Offer {
   id: string;

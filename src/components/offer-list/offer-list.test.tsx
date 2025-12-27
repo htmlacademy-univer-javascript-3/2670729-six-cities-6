@@ -3,8 +3,8 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import OfferList from './OfferList';
-import type { CardProps } from '../Card/card';
+import OfferList from './offer-list';
+import type { CardProps } from '../card/card';
 import { reducer } from '../../store/reducer';
 
 const createMockStore = () =>

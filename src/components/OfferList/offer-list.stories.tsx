@@ -3,7 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { reducer } from '../../store/reducer';
-import OfferList from './OfferList';
+import OfferList from './offer-list';
 import type { CardProps } from '../Card/card';
 
 const mockCards: CardProps[] = [

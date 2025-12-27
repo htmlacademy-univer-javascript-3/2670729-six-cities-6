@@ -1,5 +1,5 @@
 import { memo, useCallback } from 'react';
-import Card, { CardProps } from '../Card/card';
+import Card, { CardProps } from '../card/card';
 
 type OfferListProps = {
   cards: CardProps[];
