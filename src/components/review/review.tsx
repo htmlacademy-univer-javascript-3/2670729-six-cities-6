@@ -1,5 +1,6 @@
 import { memo } from 'react';
 import type { Review as ReviewType } from '../../types';
+import { RatingDisplay } from '../../const';
 
 export type ReviewProps = {
   review: ReviewType;
@@ -26,7 +27,7 @@ const Review: React.FC<ReviewProps> = memo(({ review, formattedDate }) => (
       <div className="reviews__rating rating">
         <div className="reviews__stars rating__stars">
           <span
-            style={{ width: `${review.rating * 20}%` }}
+            style={{ width: `${review.rating * RatingDisplay.PERCENTAGE_MULTIPLIER}%` }}
           >
           </span>
           <span className="visually-hidden">Rating</span>

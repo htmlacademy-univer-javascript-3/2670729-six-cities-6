@@ -12,7 +12,7 @@ import { useAppSelector, useAppDispatch } from '../../store';
 import { fetchOfferById, fetchNearbyOffers, fetchReviews, toggleFavorite } from '../../store/actions';
 import { getAuthorizationStatus } from '../../store/selectors';
 import Spinner from '../../components/spinner';
-import { formatHousingType } from '../../const';
+import { formatHousingType, OfferImages, NearbyOffers, MapZoom, RatingDisplay } from '../../const';
 
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
@@ -32,16 +32,22 @@ const Offer: React.FC = () => {
   const isAuthorized = authorizationStatus === 'AUTH';
 
   useEffect(() => {
+    let isMounted = true;
+
     const loadData = async () => {
       if (!id) {
-        setIsNotFound(true);
-        setIsLoading(false);
+        if (isMounted) {
+          setIsNotFound(true);
+          setIsLoading(false);
+        }
         return;
       }
 
       try {
-        setIsLoading(true);
-        setIsNotFound(false);
+        if (isMounted) {
+          setIsLoading(true);
+          setIsNotFound(false);
+        }
 
         const [offerData, nearbyData, reviewsData] = await Promise.all([
           dispatch(fetchOfferById(id)),
@@ -49,24 +55,34 @@ const Offer: React.FC = () => {
           dispatch(fetchReviews(id)),
         ]);
 
-        setOffer(offerData);
-        setNearOffers(nearbyData);
-        setReviews(reviewsData);
+        if (isMounted) {
+          setOffer(offerData);
+          setNearOffers(nearbyData);
+          setReviews(reviewsData);
+        }
       } catch (error) {
-        if (error && typeof error === 'object' && 'response' in error) {
-          const axiosError = error as { response?: { status?: number } };
-          if (axiosError.response?.status === 404) {
+        if (isMounted) {
+          if (error && typeof error === 'object' && 'response' in error) {
+            const axiosError = error as { response?: { status?: number } };
+            if (axiosError.response?.status === 404) {
+              setIsNotFound(true);
+            }
+          } else {
             setIsNotFound(true);
           }
-        } else {
-          setIsNotFound(true);
         }
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
     void loadData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [id, dispatch]);
 
   // Получаем данные для карты: текущее предложение + 3 ближайших
@@ -78,7 +94,7 @@ const Offer: React.FC = () => {
         location: {
           latitude: 0,
           longitude: 0,
-          zoom: 12
+          zoom: MapZoom.DEFAULT
         }
       };
     }
@@ -88,13 +104,13 @@ const Offer: React.FC = () => {
       location: {
         latitude: offer.location.latitude,
         longitude: offer.location.longitude,
-        zoom: 12
+        zoom: MapZoom.DEFAULT
       }
     };
   }, [offer]);
 
   const limitedNearOffers = useMemo(
-    () => nearOffers.slice(0, 3),
+    () => nearOffers.slice(0, NearbyOffers.MAX),
     [nearOffers]
   );
 
@@ -166,12 +182,12 @@ const Offer: React.FC = () => {
       <section className="offer">
         <div className="offer__gallery-container container">
           <div className="offer__gallery">
-            {offer.images.slice(0, 6).map((image, imageIndex) => (
+            {offer.images.slice(0, OfferImages.MAX).map((image) => (
               <div key={image} className="offer__image-wrapper">
                 <img
                   className="offer__image"
                   src={image}
-                  alt={`Photo ${imageIndex + 1}`}
+                  alt={`Photo ${offer.images.indexOf(image) + 1}`}
                 />
               </div>
             ))}
@@ -203,7 +219,7 @@ const Offer: React.FC = () => {
             </div>
             <div className="offer__rating rating">
               <div className="offer__stars rating__stars">
-                <span style={{ width: `${Math.round(offer.rating) * 20}%` }}></span>
+                <span style={{ width: `${Math.round(offer.rating) * RatingDisplay.PERCENTAGE_MULTIPLIER}%` }}></span>
                 <span className="visually-hidden">Rating</span>
               </div>
               <span className="offer__rating-value rating__value">
@@ -229,7 +245,7 @@ const Offer: React.FC = () => {
               <h2 className="offer__inside-title">What&apos;s inside</h2>
               <ul className="offer__inside-list">
                 {offer.goods.map((item) => (
-                  <li key={item} className="offer__inside-item">
+                  <li key={`${offer.id}-${item}`} className="offer__inside-item">
                     {item}
                   </li>
                 ))}
@@ -258,7 +274,7 @@ const Offer: React.FC = () => {
               </div>
               <div className="offer__description">
                 {offer.description.map((item) => (
-                  <p key={item} className="offer__text">
+                  <p key={`${offer.id}-desc-${item}`} className="offer__text">
                     {item}
                   </p>
                 ))}

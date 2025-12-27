@@ -1,6 +1,7 @@
 import { useState, ChangeEvent, FormEvent, useCallback, useMemo } from 'react';
 import { useAppDispatch } from '../../store';
 import { postReview } from '../../store/actions';
+import { ReviewLength, ReviewRating } from '../../const';
 
 type ReviewFormProps = {
   offerId: string;
@@ -25,7 +26,7 @@ const ReviewForm = ({ offerId, onReviewAdded }: ReviewFormProps) => {
   const isFormValid = useMemo((): boolean => {
     const rating = Number(formData.rating);
     const reviewLength = formData.review.trim().length;
-    return rating >= 1 && rating <= 5 && reviewLength >= 50 && reviewLength <= 300;
+    return rating >= ReviewRating.MIN && rating <= ReviewRating.MAX && reviewLength >= ReviewLength.MIN && reviewLength <= ReviewLength.MAX;
   }, [formData.rating, formData.review]);
 
   const handleFieldChange = useCallback((evt: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -195,15 +196,15 @@ const ReviewForm = ({ offerId, onReviewAdded }: ReviewFormProps) => {
         value={formData.review}
         onChange={handleFieldChange}
         disabled={isSubmitting}
-        minLength={50}
-        maxLength={300}
+        minLength={ReviewLength.MIN}
+        maxLength={ReviewLength.MAX}
       >
       </textarea>
       <div className="reviews__button-wrapper">
         <p className="reviews__help">
           To submit review please make sure to set{' '}
           <span className="reviews__star">rating</span> and describe your stay
-          with at least <b className="reviews__text-amount">50 characters</b>.
+          with at least <b className="reviews__text-amount">{ReviewLength.MIN} characters</b>.
         </p>
         <button
           className="reviews__submit form__submit button"

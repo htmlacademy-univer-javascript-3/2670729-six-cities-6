@@ -16,32 +16,52 @@ const Favorites: React.FC = () => {
   const prevFavoriteCountRef = useRef(favoriteCount);
 
   useEffect(() => {
+    let isMounted = true;
+
     if (authorizationStatus === 'AUTH') {
-      setIsLoading(true);
+      if (isMounted) {
+        setIsLoading(true);
+      }
       dispatch(fetchFavorites())
         .then((favoriteOffers) => {
-          setOffers(favoriteOffers);
-          setIsLoading(false);
-          prevFavoriteCountRef.current = favoriteOffers.length;
+          if (isMounted) {
+            setOffers(favoriteOffers);
+            setIsLoading(false);
+            prevFavoriteCountRef.current = favoriteOffers.length;
+          }
         })
         .catch(() => {
-          setIsLoading(false);
+          if (isMounted) {
+            setIsLoading(false);
+          }
         });
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [dispatch, authorizationStatus]);
 
   // Перезагружаем favorites при изменении favoriteCount
   useEffect(() => {
+    let isMounted = true;
+
     if (authorizationStatus === 'AUTH' && !isLoading && prevFavoriteCountRef.current !== favoriteCount) {
       dispatch(fetchFavorites())
         .then((favoriteOffers) => {
-          setOffers(favoriteOffers);
-          prevFavoriteCountRef.current = favoriteOffers.length;
+          if (isMounted) {
+            setOffers(favoriteOffers);
+            prevFavoriteCountRef.current = favoriteOffers.length;
+          }
         })
         .catch(() => {
           // Игнорируем ошибки при перезагрузке
         });
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [dispatch, authorizationStatus, isLoading, favoriteCount]);
 
   const groupedByCity: Record<string, Offer[]> = useMemo(

@@ -12,6 +12,7 @@ import { useSearchParams } from 'react-router-dom';
 import { getOffersByCity, getOffers, getIsLoading } from '../../store/selectors';
 import { changeCity } from '../../store/actions';
 import { useAppSelector } from '../../store';
+import { MapZoom } from '../../const';
 
 type MainProps = {
   cities: City[];
@@ -45,7 +46,7 @@ const Main: React.FC<MainProps> = ({ cities: propCities = [] }) => {
           location: {
             latitude: offer.location.latitude,
             longitude: offer.location.longitude,
-            zoom: 12,
+            zoom: MapZoom.DEFAULT,
           },
         };
       }
